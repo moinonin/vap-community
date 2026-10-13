@@ -1,0 +1,73 @@
+task_id: sprint-9-fraud-intelligence
+summary: "Production fraud detection covering all threat vectors — behavioural biometrics, device fingerprinting, automation detection, Sybil detection, reputation scoring, ensemble model"
+depends_on: ["sprint-8-attention-intelligence"]
+local_goals:
+  - id: L1
+    description: "CREATE: Behavioural biometrics features (mouse curvature, keystroke dynamics, pressure) in packages/ml/fraud/biometrics/"
+    verification:
+      type: file_exists
+      path: "packages/ml/fraud/biometrics/src/index.ts"
+      expect:
+        content_contains: "extractBiometricFeatures"
+  - id: L2
+    description: "CREATE: Device fingerprinting (browser attrs, canvas, WebGL, audio, battery) in packages/ml/fraud/fingerprint/ with entropy ≥ 18 bits"
+    verification:
+      type: file_exists
+      path: "packages/ml/fraud/fingerprint/src/index.ts"
+      expect:
+        content_contains: "fingerprintDevice"
+  - id: L3
+    description: "CREATE: Automation detection (headless, Puppeteer, Selenium, Playwright) in packages/ml/fraud/automation/ with ≥ 99% detection rate"
+    verification:
+      type: file_exists
+      path: "packages/ml/fraud/automation/src/index.ts"
+      expect:
+        content_contains: "detectAutomation"
+  - id: L4
+    description: "CREATE: Sybil detection (IP clustering, device correlation, velocity) in packages/ml/fraud/sybil/"
+    verification:
+      type: file_exists
+      path: "packages/ml/fraud/sybil/src/index.ts"
+      expect:
+        content_contains: "detectSybil"
+  - id: L5
+    description: "CREATE: Reputation scoring (device, IP, subnet, ASN, time-decayed) in packages/ml/fraud/reputation/"
+    verification:
+      type: file_exists
+      path: "packages/ml/fraud/reputation/src/index.ts"
+      expect:
+        content_contains: "calculateReputation"
+  - id: L6
+    description: "CREATE: Fraud ensemble model (gradient boosting + neural) in packages/ml/fraud/ensemble/ with AUC ≥ 0.98, precision ≥ 0.95 at 0.1% FPR"
+    verification:
+      type: file_exists
+      path: "packages/ml/fraud/ensemble/src/index.ts"
+      expect:
+        content_contains: "FraudEnsemble"
+  - id: L7
+    description: "CREATE: Fraud model serving in apps/ml-serving/fraud/ (shared infra with attention)"
+    verification:
+      type: file_exists
+      path: "apps/ml-serving/fraud/src/index.ts"
+      expect:
+        content_contains: "serve"
+  - id: L8
+    description: "VERIFY: Conformance - Fraud scores deterministic, auditable"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/ml-fraud -- --testPathPattern=fraud-determinism"
+      expect:
+        exit_code: 0
+  - id: L9
+    description: "VERIFY: Integration - Fraud signals feed verification engine policy → FAIL outcome"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/verification -- --testPathPattern=fraud-verification"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  ml_framework: "TensorFlow.js + @tensorflow/tfjs-node (or XGBoost via native bindings)"
+  test_framework: Vitest

@@ -1,0 +1,76 @@
+# Git and VCS
+.git
+.gitignore
+
+# Dependencies & Package Managers
+node_modules
+**/node_modules
+.pnpm-store
+.node-gyp-cache
+
+# Python Virtual Environments & Caches
+.venv
+githeri/.venv
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.coverage
+htmlcov
+*.egg-info
+
+# Build outputs & caches
+dist
+apps/api/dist
+apps/ml-serving/dist
+build
+**/build
+.turbo
+**/.turbo
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# Test & coverage artifacts
+coverage
+**/coverage
+*.test.ts
+*.spec.ts
+*.test.js
+*.spec.js
+tests/
+**/tests/
+debug_test*.ts
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+failurelogs
+
+# OS & Editor files
+.DS_Store
+**/.DS_Store
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Documentation & large assets unnecessary in build images
+docs/
+!docs/whitepaper/
+research/
+calibration_*.png
+Dockerfile.test

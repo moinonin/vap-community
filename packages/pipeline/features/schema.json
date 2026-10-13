@@ -1,0 +1,165 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "VAP Evidence Feature Extraction Schema",
+  "description": "Canonical feature extraction schema for VAP evidence types (E-INTERACTION, E-VISIBLE, E-DURATION, E-CONTEXT, E-CUSTOM). Used by attention, fraud, and confidence models.",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "e-interaction": {
+      "type": "object",
+      "description": "Features derived from E-INTERACTION evidence (VAP Section 5)",
+      "properties": {
+        "avg_scroll_velocity": {
+          "type": "number",
+          "description": "Average scroll velocity in pixels/second"
+        },
+        "scroll_direction_changes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of scroll direction reversals"
+        },
+        "click_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total click count in session"
+        },
+        "keypress_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total keypress count in session"
+        },
+        "interaction_duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total active interaction duration in milliseconds"
+        },
+        "engagement_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Computed engagement score [0,1]"
+        },
+        "click_interval_cv": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Coefficient of variation of click intervals"
+        },
+        "mouse_movement_score": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Aggregate mouse movement metric"
+        }
+      },
+      "required": ["avg_scroll_velocity", "scroll_direction_changes", "click_count", "keypress_count", "interaction_duration_ms"]
+    },
+    "e-visible": {
+      "type": "object",
+      "description": "Features derived from E-VISIBLE evidence (VAP Section 5)",
+      "properties": {
+        "visible_duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total time content was visible in milliseconds"
+        },
+        "max_visibility_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Maximum viewport visibility ratio observed"
+        },
+        "avg_visibility_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Average viewport visibility ratio across session"
+        },
+        "viewport_intersections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "timestamp": { "type": "string", "format": "date-time" },
+              "ratio": { "type": "number", "minimum": 0, "maximum": 1 }
+            },
+            "required": ["timestamp", "ratio"]
+          },
+          "description": "Timestamped viewport intersection ratios"
+        }
+      },
+      "required": ["visible_duration_ms", "max_visibility_ratio", "avg_visibility_ratio"]
+    },
+    "e-duration": {
+      "type": "object",
+      "description": "Features derived from E-DURATION evidence (VAP Section 5)",
+      "properties": {
+        "session_duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total session duration in milliseconds"
+        },
+        "active_duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Active interaction duration in milliseconds"
+        },
+        "idle_duration_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Idle duration in milliseconds"
+        },
+        "heartbeat_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of heartbeat signals received"
+        },
+        "heartbeat_interval_cv": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Coefficient of variation of heartbeat intervals"
+        }
+      },
+      "required": ["session_duration_ms", "active_duration_ms", "idle_duration_ms", "heartbeat_count"]
+    },
+    "e-context": {
+      "type": "object",
+      "description": "Features derived from E-CONTEXT evidence (VAP Section 5)",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": ["browser", "mobile", "desktop", "server"],
+          "description": "Platform type"
+        },
+        "user_agent_entropy": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "User agent string entropy (normalized)"
+        },
+        "viewport_size": {
+          "type": "object",
+          "properties": {
+            "width": { "type": "integer", "minimum": 0 },
+            "height": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "device_pixel_ratio": {
+          "type": "number",
+          "minimum": 0
+        },
+        "timezone": { "type": "string" },
+        "language": { "type": "string" },
+        "connection_type": { "type": "string" },
+        "effective_type": { "type": "string" }
+      },
+      "required": ["platform"]
+    },
+    "e-custom": {
+      "type": "object",
+      "description": "Features derived from E-CUSTOM evidence (VAP Section 5)",
+      "additionalProperties": true,
+      "description": "Arbitrary key-value pairs for custom evidence types"
+    }
+  },
+  "required": ["e-interaction", "e-visible", "e-duration", "e-context"],
+  "additionalProperties": false
+}

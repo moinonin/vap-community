@@ -1,0 +1,40 @@
+{
+  "consumer": {
+    "name": "verified-attention-api"
+  },
+  "provider": {
+    "name": "verified-attention-settlement-worker"
+  },
+  "interactions": [
+    {
+      "description": "Reconcile settlement ledger",
+      "providerState": "settlement exists",
+      "request": {
+        "method": "GET",
+        "path": "/settlements/reconcile/settle-001",
+        "headers": {
+          "x-correlation-id": "test-corr-003"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "settlementId": "settle-001",
+          "isBalanced": true,
+          "discrepancyMicros": 0,
+          "expectedTotalMicros": 1500000,
+          "actualTotalMicros": 1500000,
+          "reconciledAt": "2024-06-01T12:00:00Z"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  }
+}

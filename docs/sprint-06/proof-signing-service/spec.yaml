@@ -1,0 +1,56 @@
+task_id: proof-signing-service
+summary: "Sign a Proof of Attention with the verifier's Ed25519 private key, emit a proof event, and store the signed proof"
+depends_on: ["verifier-key-management", "implement-proof-of-attention"]
+local_goals:
+  - id: L1
+    description: "signProof() takes an UnsignedProof and verifier key, returns a SIGNED Proof with valid Ed25519 signature"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=sign-proof
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L2
+    description: "Signed proof's signature field is non-empty base64url"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=signature-format
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L3
+    description: "Proof signing event is emitted with proofId, verifierId, and timestamp"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=sign-event
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L4
+    description: "Signing with a superseded key throws KEY_SUPERSEDED error"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=sign-superseded
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L5
+    description: "The signProof function exists and is exported from the verification package"
+    verification:
+      type: file_exists
+      path: packages/verification/src/signing.ts
+      expect:
+        content_contains: "export function signProof"
+  - id: L6
+    description: "Verification package typecheck passes with signing module"
+    verification:
+      type: cli
+      command: pnpm typecheck --filter=@verified-attention/verification
+      expect:
+        exit_code: 0
+global_goals_refs: ["G5", "G13"]
+context:
+  language: TypeScript
+  framework: Express
+  orm: Prisma
+  test_framework: Vitest

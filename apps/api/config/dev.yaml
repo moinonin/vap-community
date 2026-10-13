@@ -1,0 +1,27 @@
+service:
+  name: verified-attention-api
+  port: 3000
+  host: 0.0.0.0
+
+tracing:
+  enabled: true
+  exporter: otlp
+  endpoint: http://jaeger:4317
+  service_name: vae-api
+
+security:
+  cors:
+    origins: ["http://localhost:3000"]
+  rate_limit:
+    max_requests: 100
+    window_ms: 60000
+
+secrets:
+  # In production, resolve via Vault / SealedSecrets / environment injection
+  # Dev: loaded from local file; never commit secrets
+  vault_path: null
+  local_file_path: ./.env.local
+
+correlation:
+  header_name: x-correlation-id
+  propagate: true

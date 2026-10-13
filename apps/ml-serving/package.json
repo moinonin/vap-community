@@ -1,0 +1,37 @@
+{
+  "name": "@verified-attention/ml-serving",
+  "version": "0.1.0-dev",
+  "description": "Attention model serving app: HTTP /v1/score endpoint, drift detection, retrain hook",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/index.js",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "@verified-attention/core": "workspace:*",
+    "@verified-attention/ml-attention-features": "workspace:*",
+    "@verified-attention/ml-attention-model": "workspace:*",
+    "tsdown": "^0.22.14"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

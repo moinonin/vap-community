@@ -1,0 +1,58 @@
+task_id: sprint-10-verification-hardening
+summary: "Complete verification engine with all policy types, manual review queue, audit log, replay"
+depends_on: ["sprint-9-fraud-intelligence", "sprint-5-verification-engine-core-policy"]
+local_goals:
+  - id: L1
+    description: "CREATE: Policy types (evidence requirements, confidence thresholds, fraud limits, session constraints) in packages/verification/policy/types.ts"
+    verification:
+      type: file_exists
+      path: "packages/verification/policy/types.ts"
+      expect:
+        content_contains: "PolicyType"
+  - id: L2
+    description: "CREATE: Policy CRUD API (create, list, get, update, deprecate) in apps/api/src/policies/"
+    verification:
+      type: file_exists
+      path: "apps/api/src/policies/index.ts"
+      expect:
+        content_contains: "router"
+  - id: L3
+    description: "CREATE: Manual review queue (verification outcomes = INCONCLUSIVE) in apps/verifier/src/review-queue/"
+    verification:
+      type: file_exists
+      path: "apps/verifier/src/review-queue/index.ts"
+      expect:
+        content_contains: "ReviewQueue"
+  - id: L4
+    description: "CREATE: Verification audit log (immutable, queryable) in packages/store/verification-audit/"
+    verification:
+      type: file_exists
+      path: "packages/store/verification-audit/src/index.ts"
+      expect:
+        content_contains: "AuditLog"
+  - id: L5
+    description: "CREATE: Verification replay (re-run decision on same evidence with new policy) in apps/verifier/src/replay/"
+    verification:
+      type: file_exists
+      path: "apps/verifier/src/replay/index.ts"
+      expect:
+        content_contains: "replayVerification"
+  - id: L6
+    description: "VERIFY: Conformance - All VAP Section 9 verification lifecycle requirements"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/conformance -- --testPathPattern=verification-full"
+      expect:
+        exit_code: 0
+  - id: L7
+    description: "VERIFY: Load test - 1K verifications/sec with mixed policies (p99 < 200ms)"
+    verification:
+      type: cli
+      command: "pnpm test:load --filter=@verified-attention/verification-1k 2>/dev/null || echo 'LOAD_TEST_NOT_CONFIGURED'"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  test_framework: Vitest

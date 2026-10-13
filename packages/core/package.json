@@ -1,0 +1,69 @@
+{
+  "name": "@verified-attention/core",
+  "version": "0.1.0-dev",
+  "description": "Core VAP types: Evidence, Observation, Session, Claim, Proof",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./observation": {
+      "import": "./dist/observation.mjs",
+      "require": "./dist/observation.js",
+      "types": "./dist/observation.d.ts"
+    },
+    "./evidence": {
+      "import": "./dist/evidence.mjs",
+      "require": "./dist/evidence.js",
+      "types": "./dist/evidence.d.ts"
+    },
+    "./session": {
+      "import": "./dist/session.mjs",
+      "require": "./dist/session.js",
+      "types": "./dist/session.d.ts"
+    },
+    "./claim": {
+      "import": "./dist/claim.mjs",
+      "require": "./dist/claim.js",
+      "types": "./dist/claim.d.ts"
+    },
+    "./proof": {
+      "import": "./dist/proof.mjs",
+      "require": "./dist/proof.js",
+      "types": "./dist/proof.d.ts"
+    },
+    "./common": {
+      "import": "./dist/common.mjs",
+      "require": "./dist/common.js",
+      "types": "./dist/common.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsdown": "^0.11.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

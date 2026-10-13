@@ -1,0 +1,11 @@
+node_modules
+dist
+*.test.ts
+*.spec.ts
+*.test.js
+vitest.config.ts
+tsconfig.json
+tsconfig.tsbuildinfo
+.turbo
+.env
+.git

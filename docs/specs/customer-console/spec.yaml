@@ -1,0 +1,50 @@
+task_id: sprint-20-customer-console
+summary: "Build commercial customer console and developer portal inside apps/portal"
+depends_on: ["sprint-19-public-api-stabilisation"]
+local_goals:
+  - id: L1
+    description: "SPEC: Create formal specification for Commercial Customer Console in docs/specs/customer-console/SPEC-0020-CUSTOMER-CONSOLE.md"
+    verification:
+      type: file_exists
+      path: "docs/specs/customer-console/SPEC-0020-CUSTOMER-CONSOLE.md"
+      expect:
+        content_contains: "SPEC-0020"
+  - id: L2
+    description: "API KEYS: Self-serve key generation, scoping, and webhook configuration in apps/portal"
+    verification:
+      type: file_exists
+      path: "apps/portal/public/app.js"
+      expect:
+        content_contains: "generateApiKey"
+  - id: L3
+    description: "POLICY STUDIO: Visual policy builder (dwell time, confidence threshold, evidence types) in apps/portal"
+    verification:
+      type: file_exists
+      path: "apps/portal/public/index.html"
+      expect:
+        content_contains: "policy-studio"
+  - id: L4
+    description: "AUDIT EXPLORER: Proof filtering, cryptographic verification inspection, and Ed25519 signature audit export"
+    verification:
+      type: file_exists
+      path: "apps/portal/public/app.js"
+      expect:
+        content_contains: "renderProofAudit"
+  - id: L5
+    description: "BILLING & LEDGER: Metered usage calculator, bot waste savings, and settlement ledger overview"
+    verification:
+      type: file_exists
+      path: "apps/portal/public/index.html"
+      expect:
+        content_contains: "billing-ledger"
+  - id: L6
+    description: "E2E VERIFICATION: Portal launches and exposes both public protocol information and commercial console tabs"
+    verification:
+      type: cli
+      command: "PORT=4180 node apps/portal/server.mjs"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G12", "G19", "G20"]
+context:
+  language: JavaScript/HTML/CSS
+  framework: Vanilla/Node.js

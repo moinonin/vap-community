@@ -1,0 +1,56 @@
+task_id: verifier-key-management
+summary: "Ed25519 verifier key generation, rotation, HSM interface stub, and audit logging"
+depends_on: ["implement-proof-of-attention"]
+local_goals:
+  - id: L1
+    description: "Ed25519 key pair can be generated and persisted to the key store"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=key-generation
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L2
+    description: "Public key is exported in base64url format for proof verification"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=key-export
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L3
+    description: "Key rotation creates a new active key and marks the previous as superseded"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=key-rotation
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L4
+    description: "HSM interface stub is defined and throws NOT_IMPLEMENTED when called"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=hsm-stub
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L5
+    description: "Every key operation (generate, rotate, supersede) emits an audit log entry"
+    verification:
+      type: file_exists
+      path: packages/verification/src/audit.ts
+      expect:
+        content_contains: "logKeyOperation"
+  - id: L6
+    description: "Verification package typecheck passes with all new key management types"
+    verification:
+      type: cli
+      command: pnpm typecheck --filter=@verified-attention/verification
+      expect:
+        exit_code: 0
+global_goals_refs: ["G5", "G13"]
+context:
+  language: TypeScript
+  framework: Express
+  orm: Prisma
+  test_framework: Vitest

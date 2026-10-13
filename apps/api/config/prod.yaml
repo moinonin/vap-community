@@ -1,0 +1,26 @@
+service:
+  name: verified-attention-api
+  port: 3000
+  host: 0.0.0.0
+
+tracing:
+  enabled: true
+  exporter: otlp
+  endpoint: https://tempo.monitoring:4317
+  service_name: vae-api
+  tls_enabled: true
+
+security:
+  cors:
+    origins: ["https://verified-attention.app"]
+  rate_limit:
+    max_requests: 500
+    window_ms: 60000
+
+secrets:
+  vault_path: /secrets/verified-attention/api
+  local_file_path: null  # Never load from file in production
+
+correlation:
+  header_name: x-correlation-id
+  propagate: true

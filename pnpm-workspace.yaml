@@ -1,0 +1,11 @@
+packages:
+  - packages/*
+  - packages/pipeline/*
+  - packages/observability/*
+  - packages/ml/**
+  - packages/store/**
+  - packages/crypto/**
+  - packages/reward/**
+  - packages/privacy/*
+  - packages/sdk/*
+  - apps/*

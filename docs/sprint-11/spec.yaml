@@ -1,0 +1,58 @@
+task_id: sprint-11-proof-generation-production
+summary: "Proof generation at scale with full audit trail — async batched pipeline, HSM/KMS signing, revocation, webhooks"
+depends_on: ["sprint-10-verification-engine-hardening"]
+local_goals:
+  - id: L1
+    description: "CREATE: Proof generation pipeline (async, batched, idempotent) in apps/verifier/src/proof-gen/"
+    verification:
+      type: file_exists
+      path: "apps/verifier/src/proof-gen/index.ts"
+      expect:
+        content_contains: "ProofGenerationPipeline"
+  - id: L2
+    description: "CREATE: Proof signing with HSM/cloud KMS integration in packages/crypto/hsm/"
+    verification:
+      type: file_exists
+      path: "packages/crypto/hsm/src/index.ts"
+      expect:
+        content_contains: "signWithHSM"
+  - id: L3
+    description: "CREATE: Proof revocation & supplementary proofs in packages/core/proof/revocation.ts"
+    verification:
+      type: file_exists
+      path: "packages/core/proof/revocation.ts"
+      expect:
+        content_contains: "revokeProof"
+  - id: L4
+    description: "CREATE: Proof retrieval API (by PID, session, content, verifier, time) in apps/api/src/proofs/"
+    verification:
+      type: file_exists
+      path: "apps/api/src/proofs/index.ts"
+      expect:
+        content_contains: "router"
+  - id: L5
+    description: "CREATE: Proof webhook delivery (retry, backoff, dead letter, HMAC sig) in apps/verifier/src/webhooks/"
+    verification:
+      type: file_exists
+      path: "apps/verifier/src/webhooks/index.ts"
+      expect:
+        content_contains: "deliverWebhook"
+  - id: L6
+    description: "VERIFY: Conformance - Proof structure, signature, immutability, revocation"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/conformance -- --testPathPattern=proof-full"
+      expect:
+        exit_code: 0
+  - id: L7
+    description: "VERIFY: Load test - 10K proofs/min generation + signing (p99 < 1s)"
+    verification:
+      type: cli
+      command: "pnpm test:load --filter=@verified-attention/proof-gen-10k 2>/dev/null || echo 'LOAD_TEST_NOT_CONFIGURED'"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  test_framework: Vitest

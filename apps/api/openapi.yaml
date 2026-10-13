@@ -1,0 +1,786 @@
+openapi: 3.1.0
+info:
+  title: Verified Attention Engine API
+  version: 0.1.0-dev
+  description: |
+    Public REST API for the Verified Attention Engine (VAE).
+    Implements VAP Protocol endpoints for proofs, sessions, evidence, and verification.
+  license:
+    name: Apache-2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+
+servers:
+  - url: https://api.vae.dev/v1
+    description: Production
+  - url: https://staging.api.vae.dev/v1
+    description: Staging
+  - url: http://localhost:3000/v1
+    description: Local development
+
+tags:
+  - name: Proofs
+    description: Proof of Attention lifecycle — creation, signing, publishing, revocation, verification
+  - name: Sessions
+    description: Session lifecycle — creation, retrieval, update, close, expire
+
+security:
+  - bearerAuth: []
+
+paths:
+  /proofs:
+    get:
+      tags: [Proofs]
+      summary: List proofs
+      description: Retrieve a paginated list of proofs, optionally filtered by session or state.
+      operationId: listProofs
+      parameters:
+        - name: sessionId
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SessionId'
+          description: Filter proofs by session ID.
+        - name: state
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ProofState'
+          description: Filter proofs by lifecycle state.
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Maximum number of proofs to return.
+        - name: cursor
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Pagination cursor from the previous response.
+      responses:
+        '200':
+          description: Paginated list of proofs.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProofListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Proofs]
+      summary: Create a proof
+      description: |
+        Create a new unsigned Proof of Attention from a completed verification session.
+        The proof will be in UNSIGNED state and must be signed separately.
+      operationId: createProof
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProofRequest'
+      responses:
+        '201':
+          description: Proof created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proof'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+
+  /proofs/{proofId}:
+    get:
+      tags: [Proofs]
+      summary: Get a proof by ID
+      description: Retrieve a single Proof of Attention by its unique identifier.
+      operationId: getProof
+      parameters:
+        - name: proofId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProofId'
+      responses:
+        '200':
+          description: Proof found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proof'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /proofs/{proofId}/sign:
+    post:
+      tags: [Proofs]
+      summary: Sign a proof
+      description: |
+        Apply a cryptographic signature to an unsigned proof.
+        Transitions the proof from UNSIGNED to SIGNED state.
+      operationId: signProof
+      parameters:
+        - name: proofId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProofId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignProofRequest'
+      responses:
+        '200':
+          description: Proof signed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proof'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Proof is not in UNSIGNED state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /proofs/{proofId}/publish:
+    post:
+      tags: [Proofs]
+      summary: Publish a proof
+      description: |
+        Publish a signed proof, transitioning it from SIGNED to PUBLISHED.
+        Published proofs are publicly verifiable.
+      operationId: publishProof
+      parameters:
+        - name: proofId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProofId'
+      responses:
+        '200':
+          description: Proof published successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proof'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Proof is not in SIGNED state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /proofs/{proofId}/revoke:
+    post:
+      tags: [Proofs]
+      summary: Revoke a proof
+      description: |
+        Revoke a published or signed proof.
+        Transitions the proof to REVOKED state. Revoked proofs remain queryable.
+      operationId: revokeProof
+      parameters:
+        - name: proofId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProofId'
+      responses:
+        '200':
+          description: Proof revoked successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Proof'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /proofs/{proofId}/verify:
+    post:
+      tags: [Proofs]
+      summary: Verify a proof
+      description: |
+        Independently verify a proof's signature and hash without the verifier's
+        private key. Returns the verification result.
+      operationId: verifyProof
+      parameters:
+        - name: proofId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ProofId'
+      responses:
+        '200':
+          description: Verification result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProofValidationResult'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /sessions:
+    get:
+      tags: [Sessions]
+      summary: List sessions
+      description: Retrieve a paginated list of sessions.
+      operationId: listSessions
+      responses:
+        '200':
+          description: Paginated list of sessions.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+    post:
+      tags: [Sessions]
+      summary: Create a session
+      description: |
+        Create a new verification session in CREATED state.
+      operationId: createSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSessionRequest'
+      responses:
+        '201':
+          description: Session created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /sessions/{sessionId}:
+    get:
+      tags: [Sessions]
+      summary: Get a session by ID
+      description: Retrieve a single session by its unique identifier.
+      operationId: getSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SessionId'
+      responses:
+        '200':
+          description: Session found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [Sessions]
+      summary: Update a session
+      description: |
+        Update session configuration, participant, or metadata.
+        Only allowed for non-terminal session states.
+      operationId: updateSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SessionId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSessionRequest'
+      responses:
+        '200':
+          description: Session updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Session is in terminal state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sessions/{sessionId}/close:
+    post:
+      tags: [Sessions]
+      summary: Close a session
+      description: |
+        Close an active session, transitioning it to CANCELLED state.
+      operationId: closeSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SessionId'
+      responses:
+        '200':
+          description: Session closed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Session is already in terminal state.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /sessions/{sessionId}/expire:
+    post:
+      tags: [Sessions]
+      summary: Expire a session
+      description: |
+        Expire an active session, transitioning it to EXPIRED state.
+        Only valid from ACTIVE or VERIFIED states.
+      operationId: expireSession
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/SessionId'
+      responses:
+        '200':
+          description: Session expired successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: Session is not in a state that can expire.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer token (JWT) authentication for API access.
+
+  schemas:
+    ProofId:
+      type: string
+      pattern: '^urn:vap:proof:[a-zA-Z0-9_-]+$'
+      description: Unique identifier for a Proof of Attention (URN format).
+      example: urn:vap:proof:550e8400-e29b-41d4-a716-446655440000
+
+    SessionId:
+      type: string
+      pattern: '^urn:vap:session:[a-zA-Z0-9_-]+$'
+      description: Unique identifier for a verification session.
+      example: urn:vap:session:550e8400-e29b-41d4-a716-446655440000
+
+    ContentId:
+      type: string
+      minLength: 1
+      maxLength: 256
+      description: Publisher-defined content identifier (opaque to protocol).
+
+    VerifierId:
+      type: string
+      minLength: 1
+      maxLength: 128
+      description: Identifier of the verifier who signed the proof.
+
+    Confidence:
+      type: number
+      format: float
+      minimum: 0
+      maximum: 1
+      description: Calibrated confidence score (0.0 to 1.0).
+
+    Hash:
+      type: string
+      pattern: '^[a-f0-9]{64}$'
+      description: SHA-256 hash (hex encoded, 64 characters).
+
+    Signature:
+      type: string
+      minLength: 1
+      description: Ed25519 signature (base64url encoded).
+
+    ProofState:
+      type: string
+      enum:
+        - UNSIGNED
+        - SIGNED
+        - PUBLISHED
+        - REVOKED
+        - EXPIRED
+      description: Lifecycle state of a Proof of Attention.
+
+    Timestamp:
+      type: string
+      format: date-time
+      description: RFC 3339 timestamp with millisecond or microsecond precision.
+
+    ProofMetadata:
+      type: object
+      properties:
+        policyId:
+          type: string
+          minLength: 1
+        verificationModelVersion:
+          type: string
+        fraudScore:
+          type: number
+          minimum: 0
+          maximum: 1
+        evidenceCount:
+          type: integer
+          minimum: 0
+        sessionDurationMs:
+          type: integer
+          minimum: 0
+        claimIds:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+
+    Proof:
+      type: object
+      required:
+        - proofId
+        - sessionId
+        - contentId
+        - confidence
+        - evidenceHash
+        - verifierId
+        - signature
+        - state
+        - issuedAt
+      properties:
+        proofId:
+          $ref: '#/components/schemas/ProofId'
+        sessionId:
+          $ref: '#/components/schemas/SessionId'
+        contentId:
+          $ref: '#/components/schemas/ContentId'
+        confidence:
+          $ref: '#/components/schemas/Confidence'
+        evidenceHash:
+          $ref: '#/components/schemas/Hash'
+        verifierId:
+          $ref: '#/components/schemas/VerifierId'
+        signature:
+          $ref: '#/components/schemas/Signature'
+        state:
+          $ref: '#/components/schemas/ProofState'
+        issuedAt:
+          $ref: '#/components/schemas/Timestamp'
+        publishedAt:
+          $ref: '#/components/schemas/Timestamp'
+        revokedAt:
+          $ref: '#/components/schemas/Timestamp'
+        expiresAt:
+          $ref: '#/components/schemas/Timestamp'
+        metadata:
+          $ref: '#/components/schemas/ProofMetadata'
+      additionalProperties: false
+
+    CreateProofRequest:
+      type: object
+      required:
+        - sessionId
+        - contentId
+        - confidence
+        - evidenceHash
+        - verifierId
+      properties:
+        sessionId:
+          $ref: '#/components/schemas/SessionId'
+        contentId:
+          $ref: '#/components/schemas/ContentId'
+        confidence:
+          $ref: '#/components/schemas/Confidence'
+        evidenceHash:
+          $ref: '#/components/schemas/Hash'
+        verifierId:
+          $ref: '#/components/schemas/VerifierId'
+        metadata:
+          $ref: '#/components/schemas/ProofMetadata'
+      additionalProperties: false
+
+    SignProofRequest:
+      type: object
+      required:
+        - signature
+      properties:
+        signature:
+          $ref: '#/components/schemas/Signature'
+      additionalProperties: false
+
+    ProofValidationResult:
+      type: object
+      required:
+        - valid
+        - proofId
+      properties:
+        valid:
+          type: boolean
+          description: Whether the proof is valid (signature + hash + state).
+        proofId:
+          $ref: '#/components/schemas/ProofId'
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: string
+              message:
+                type: string
+              path:
+                type: array
+                items:
+                  oneOf:
+                    - type: string
+                    - type: number
+        warnings:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+
+    ProofListResponse:
+      type: object
+      required:
+        - proofs
+      properties:
+        proofs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Proof'
+        nextCursor:
+          type: string
+          description: Pagination cursor for the next page (absent if no more results).
+      additionalProperties: false
+
+    Error:
+      type: object
+      required:
+        - error
+        - message
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code.
+        message:
+          type: string
+          description: Human-readable error message.
+      additionalProperties: false
+
+    SessionState:
+      type: string
+      enum: [CREATED, ACTIVE, EXPIRED, VERIFIED, CERTIFIED, CANCELLED]
+      description: Session lifecycle state (VAP Section 6).
+
+    SessionParticipant:
+      type: object
+      required:
+        - viewerIdHash
+      properties:
+        viewerIdHash:
+          type: string
+          description: Hashed viewer identifier (never raw PII).
+        consentId:
+          type: string
+          description: Optional consent record reference.
+        preferences:
+          type: object
+          additionalProperties: true
+          description: Viewer preferences for this session.
+
+    SessionConfig:
+      type: object
+      properties:
+        timeoutMs:
+          type: integer
+          minimum: 1
+          description: Session timeout in milliseconds.
+          default: 1800000
+        requiredEvidenceTypes:
+          type: array
+          items:
+            type: string
+          description: Required evidence types for verification.
+        minConfidence:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Minimum confidence threshold.
+        maxDurationMs:
+          type: integer
+          minimum: 1
+          description: Maximum session duration.
+        allowedSources:
+          type: array
+          items:
+            type: string
+          description: Allowed sources for this session.
+      additionalProperties: false
+
+    Session:
+      type: object
+      required:
+        - sessionId
+        - contentId
+        - participant
+        - config
+        - state
+        - evidenceIds
+        - claimIds
+        - startedAt
+        - lastActivityAt
+      properties:
+        sessionId:
+          $ref: '#/components/schemas/SessionId'
+        contentId:
+          $ref: '#/components/schemas/ContentId'
+        participant:
+          $ref: '#/components/schemas/SessionParticipant'
+        config:
+          $ref: '#/components/schemas/SessionConfig'
+        state:
+          $ref: '#/components/schemas/SessionState'
+        evidenceIds:
+          type: array
+          items:
+            $ref: '#/components/schemas/EvidenceId'
+        claimIds:
+          type: array
+          items:
+            type: string
+        proofId:
+          type: string
+          description: Proof reference when certified.
+        startedAt:
+          $ref: '#/components/schemas/Timestamp'
+        lastActivityAt:
+          $ref: '#/components/schemas/Timestamp'
+        expiredAt:
+          $ref: '#/components/schemas/Timestamp'
+        verifiedAt:
+          $ref: '#/components/schemas/Timestamp'
+        certifiedAt:
+          $ref: '#/components/schemas/Timestamp'
+        metadata:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+
+    CreateSessionRequest:
+      type: object
+      required:
+        - contentId
+        - participant
+      properties:
+        contentId:
+          $ref: '#/components/schemas/ContentId'
+        participant:
+          $ref: '#/components/schemas/SessionParticipant'
+        config:
+          $ref: '#/components/schemas/SessionConfig'
+        metadata:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+
+    UpdateSessionRequest:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/SessionConfig'
+        participant:
+          $ref: '#/components/schemas/SessionParticipant'
+        metadata:
+          type: object
+          additionalProperties: true
+      additionalProperties: false
+
+    SessionListResponse:
+      type: object
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Session'
+      additionalProperties: false
+
+  responses:
+    BadRequest:
+      description: Invalid request — validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Authentication required or failed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Conflict:
+      description: Resource already exists or state conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

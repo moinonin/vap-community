@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verified Attention Protocol (VAP) | The Open Attention Infrastructure</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header>
+    <div class="nav-container">
+      <div class="logo-group">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="4"></circle>
+          <line x1="4.93" y1="4.93" x2="9.17" y2="9.17"></line>
+          <line x1="14.83" y1="14.83" x2="19.07" y2="19.07"></line>
+          <line x1="14.83" y1="9.17" x2="19.07" y2="4.93"></line>
+          <line x1="14.83" y1="9.17" x2="19.07" y2="4.93"></line>
+          <line x1="4.93" y1="19.07" x2="9.17" y2="14.83"></line>
+        </svg>
+        <span>Verified Attention</span>
+        <span class="logo-badge">VAP 1.0</span>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#interactive-demo">Live Explorer</a></li>
+          <li><a href="#downloads">Open Source Downloads</a></li>
+          <li><a href="#use-cases">Use Cases</a></li>
+          <li><a href="#pricing-section">Pricing</a></li>
+          <li><a href="/whitepaper.pdf" target="_blank" class="btn btn-outline" style="padding: 0.4rem 0.8rem;">Whitepaper (PDF)</a></li>
+          <li id="auth-nav-container">
+            <button id="btn-login-trigger" class="btn btn-primary" style="padding: 0.4rem 0.9rem;" onclick="openAuthModal('login')">Sign In</button>
+            <a id="nav-console-btn" href="#console-section" class="btn btn-primary" style="display:none; padding: 0.4rem 0.9rem;">Customer Console &rarr;</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>The Missing Infrastructure Layer for Human Engagement</h1>
+    <p>
+      An open, interoperable, evidence-centric protocol that replaces vulnerable proxy metrics with 
+      <strong>cryptographically signed Proofs of Attention (PoA)</strong>.
+    </p>
+    <div class="hero-actions">
+      <a href="#interactive-demo" class="btn btn-primary">Try Interactive Explorer</a>
+      <a href="/whitepaper.pdf" target="_blank" class="btn btn-outline">Read Specification Whitepaper &rarr;</a>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="section" id="how-it-works">
+    <h2 class="section-title">Evidence-Centric Architecture (ECA)</h2>
+    <p class="section-desc">No decision without evidence. No evidence without provenance. Evidence is immutable.</p>
+    
+    <div class="grid-3">
+      <div class="card">
+        <h3>1. Micro-Observations</h3>
+        <p>Lightweight client observers (DOM visibility, micro-pause cadence, scroll velocity, focus transitions) passively stream interaction events without collecting invasive personal biometrics.</p>
+      </div>
+      <div class="card">
+        <h3>2. Immutable Evidence</h3>
+        <p>Raw observation streams are normalized, cryptographically hashed, and packaged into an append-only evidence graph referencing the session provenance.</p>
+      </div>
+      <div class="card">
+        <h3>3. Signed Proof of Attention</h3>
+        <p>Verification engines evaluate evidence against policy rules and ML calibration models, issuing an Ed25519-signed Proof of Attention token certifying confidence.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Explorer / Try-It Simulator -->
+  <section class="section" id="interactive-demo">
+    <h2 class="section-title">Interactive "Try-It" Explorer</h2>
+    <p class="section-desc">Experience client-side observation collection and real-time backend verification right now in your browser.</p>
+
+    <div class="explorer-box">
+      <!-- Left side: Interactive Client Simulator -->
+      <div class="simulator-side">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="color:#fff;">Client Interaction Sandbox</h3>
+          <span id="session-status" class="live-badge" style="display:none;">
+            <span class="pulse-dot"></span> Session Active
+          </span>
+        </div>
+        <p style="color:var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">
+          Target Content: <code>article_compliance_101</code> &bull; Policy: <code>high-trust-v1</code>
+        </p>
+
+        <!-- Simulated Reading Content Element -->
+        <div class="reading-canvas" id="reading-area">
+          <p><strong>Section 1.1: Fiduciary Responsibilities & Attention Verification</strong></p>
+          <p>Scroll through this document to trigger natural browser interaction dynamics. Notice how reading pauses, micro-scroll adjustments, and dwell times generate observation signals.</p>
+          <p>Synthetic bots typically fail the velocity distribution check because automated script movement lacks human mechanical micro-entropy and realistic cognitive dwell pauses.</p>
+          <p>Once you interact for a few moments, click "Complete Session & Verify" to submit evidence and request a signed Proof of Attention (PoA) token from the engine.</p>
+          <p><em>Keep scrolling down to increase interaction velocity and engagement score...</em></p>
+          <p>End of sample verification clause.</p>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; margin-top:auto;">
+          <button id="btn-start" class="btn btn-primary" onclick="startDemoSession()">Start Attention Session</button>
+          <button id="btn-verify" class="btn btn-outline" onclick="completeDemoSession()" disabled>Complete Session &amp; Verify</button>
+        </div>
+      </div>
+
+      <!-- Right side: Terminal & Telemetry Log -->
+      <div class="terminal-side">
+        <div class="terminal-header">
+          <span>Telemetry Stream &bull; REST API /v1</span>
+          <span id="engine-status">Engine: Online</span>
+        </div>
+        <div class="terminal-logs" id="terminal-logs">
+          <div class="log-line info">[system] Ready. Click "Start Attention Session" to initialize.</div>
+        </div>
+
+        <div id="proof-container" style="display:none;" class="proof-card">
+          <div style="color:#34d399; font-weight:bold; margin-bottom:0.25rem;">✓ PROOF OF ATTENTION ISSUED</div>
+          <div id="proof-details"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real-World Use Cases -->
+  <section class="section" id="use-cases">
+    <h2 class="section-title">Industry Applications</h2>
+    <p class="section-desc">Neutral infrastructure powering digital trust across multiple domains.</p>
+
+    <div class="grid-3">
+      <div class="card">
+        <h3>🎯 Digital Advertising</h3>
+        <p>Eliminate 20–40% ad fraud waste. Advertisers unlock payouts and pay premium CPMs solely upon receipt of verifiable, bot-free Proof of Attention tokens.</p>
+      </div>
+      <div class="card">
+        <h3>🎓 Education & E-Learning</h3>
+        <p>Award verifiable certificates grounded in verified reading comprehension without invasive webcam surveillance or proctoring spyware.</p>
+      </div>
+      <div class="card">
+        <h3>🤖 AI RLHF & Annotation</h3>
+        <p>Filter out fraudulent or automated annotator submissions from human feedback loops, ensuring foundation models train on authentic cognitive reasoning.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Open Source Downloads & Artifacts Portal (Ungated) -->
+  <section class="section" id="downloads" style="border-top: 1px solid var(--border); padding-top: 4rem;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 2rem; flex-wrap:wrap; gap:1rem;">
+      <div>
+        <span class="logo-badge" style="background:rgba(59,130,246,0.15); color:var(--accent); border-color:var(--accent); margin-bottom:0.5rem; display:inline-block;">Open Source Ecosystem (Apache-2.0 &amp; CC0)</span>
+        <h2 style="font-size: 2.2rem; font-weight: 800; color: #fff;">Open Source Downloads &amp; Packages</h2>
+        <p style="color:var(--text-muted); font-size:1rem; margin-top:0.25rem;">Free, unmetered, ungated access to all protocol specifications, production container images, SDKs, and reference engines.</p>
+      </div>
+      <div>
+        <a href="https://github.com/moinonin/verified-attention" target="_blank" class="btn btn-outline">
+          ⭐ View GitHub Monorepo &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Downloads Category 1: Official Container Images -->
+    <div style="margin-bottom: 2.5rem;">
+      <h3 style="color:#fff; font-size:1.25rem; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;">
+        <span>🐳</span> Docker Hub Container Images
+      </h3>
+      <div class="grid-3">
+        <div class="card" style="padding: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h4 style="color:#fff; margin:0;">API &amp; Ingestion</h4>
+            <span class="status-tag active">latest</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Fastify REST service for session ingest, policy evaluation, and proofs.</p>
+          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
+            docker pull moinonin/verified-attention-api:latest
+          </div>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h4 style="color:#fff; margin:0;">ML Serving &amp; Drift</h4>
+            <span class="status-tag active">latest</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Attention scoring engine with TFJS inference and PSI drift detection.</p>
+          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
+            docker pull moinonin/verified-attention-ml-serving:latest
+          </div>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h4 style="color:#fff; margin:0;">Python Backend</h4>
+            <span class="status-tag active">latest</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Python 3.11 high-throughput observation ingestion service.</p>
+          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
+            docker pull moinonin/verified-attention-python-backend:latest
+          </div>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h4 style="color:#fff; margin:0;">Verifier Worker</h4>
+            <span class="status-tag active">latest</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Background replay queue and cryptographic proof issuance daemon.</p>
+          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
+            docker pull moinonin/verified-attention-verifier:latest
+          </div>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h4 style="color:#fff; margin:0;">Settlement Worker</h4>
+            <span class="status-tag active">latest</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Publisher reward clearing, micropayments, and audit reconciliation.</p>
+          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
+            docker pull moinonin/verified-attention-settlement-worker:latest
+          </div>
+        </div>
+
+        <div class="card" style="padding: 1.25rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <h4 style="color:#fff; margin:0;">Protocol Portal</h4>
+            <span class="status-tag active">latest</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Interactive protocol explorer, client simulator, and documentation UI.</p>
+          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
+            docker pull moinonin/verified-attention-portal:latest
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Downloads Category 2: Client SDKs & CLI -->
+    <div style="margin-bottom: 2.5rem;">
+      <h3 style="color:#fff; font-size:1.25rem; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;">
+        <span>📦</span> Client SDKs &amp; Developer Tooling
+      </h3>
+      <div class="grid-3">
+        <div class="card">
+          <h4 style="color:#fff;">Browser SDK</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Passive DOM interaction observer, offline-tolerant queue, and cryptographic attestation client.</p>
+          <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+            <a href="https://github.com/moinonin/verified-attention/tree/main/packages/sdk/browser" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
+            <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4 style="color:#fff;">Publisher Chrome Extension</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Manifest V3 reference implementation for verified reading and viewer attestation across domains.</p>
+          <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+            <a href="https://github.com/moinonin/verified-attention/tree/main/packages/sdk/extension" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
+            <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4 style="color:#fff;">Developer CLI (<code>vap</code>)</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted);">Full-featured CLI tool for managing sessions, ingesting evidence batches, and auditing proofs.</p>
+          <div style="margin-top:1rem; display:flex; gap:0.5rem;">
+            <a href="https://github.com/moinonin/verified-attention/tree/main/packages/cli" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
+            <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Downloads Category 3: Protocol Specs, Whitepapers & Compose -->
+    <div>
+      <h3 style="color:#fff; font-size:1.25rem; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;">
+        <span>📄</span> Specifications, Whitepapers &amp; Local Cluster
+      </h3>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href="/whitepaper.pdf" target="_blank" class="btn btn-primary">
+          📥 Download Specification Whitepaper (PDF)
+        </a>
+        <a href="https://raw.githubusercontent.com/moinonin/verified-attention/main/docker-compose.yml" target="_blank" class="btn btn-outline">
+          ⚙️ Download docker-compose.yml
+        </a>
+        <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-outline">
+          📦 Download Complete Repository (.zip)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Public Subscription Plans & Pricing Section -->
+  <section class="section" id="pricing-section">
+    <h2 class="section-title">Transparent Verification SaaS Pricing</h2>
+    <p class="section-desc">The Verified Attention Protocol is open and free. Pay only for managed cloud verification infrastructure, HSM signing SLA, and premium fraud intelligence.</p>
+
+    <div class="pricing-grid">
+      <!-- Tier 1: Developer -->
+      <div class="pricing-card">
+        <h3 style="color:#fff;">Developer</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem;">For sandbox testing &amp; evaluation</p>
+        <div class="price-tag">$0 <span class="price-period">/ month</span></div>
+        <ul class="pricing-features">
+          <li>1,000 verified sessions / mo</li>
+          <li>Community verification keys</li>
+          <li>Standard browser SDK</li>
+          <li>Community Discord support</li>
+        </ul>
+        <button class="btn btn-outline" onclick="openConsoleGate()">Get Started Free</button>
+      </div>
+
+      <!-- Tier 2: Starter -->
+      <div class="pricing-card">
+        <h3 style="color:#fff;">Starter</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem;">For growing blogs &amp; publishers</p>
+        <div class="price-tag">$499 <span class="price-period">/ month</span></div>
+        <ul class="pricing-features">
+          <li>50,000 verified sessions / mo</li>
+          <li>Managed verification cluster</li>
+          <li>Webhook callbacks for PoA</li>
+          <li>Standard email support</li>
+        </ul>
+        <button class="btn btn-outline" onclick="openConsoleGate()">Select Starter</button>
+      </div>
+
+      <!-- Tier 3: Growth (Featured) -->
+      <div class="pricing-card featured">
+        <span class="pricing-badge">Most Popular</span>
+        <h3 style="color:#fff;">Growth</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem;">For ad networks &amp; edtech platforms</p>
+        <div class="price-tag">$2,499 <span class="price-period">/ month</span></div>
+        <ul class="pricing-features">
+          <li>500,000 verified sessions / mo</li>
+          <li>Real-time GRU anti-bot intelligence</li>
+          <li>Custom Policy Studio access</li>
+          <li>Sub-second verification SLA</li>
+          <li>Priority 24/7 Slack support</li>
+        </ul>
+        <button class="btn btn-primary" onclick="openConsoleGate()">Start 14-Day Trial</button>
+      </div>
+
+      <!-- Tier 4: Enterprise / Scale -->
+      <div class="pricing-card">
+        <h3 style="color:#fff;">Scale / Enterprise</h3>
+        <p style="color:var(--text-muted); font-size:0.85rem;">For banks, pharma, &amp; media networks</p>
+        <div class="price-tag">Custom</div>
+        <ul class="pricing-features">
+          <li>5M+ verified sessions / mo</li>
+          <li>Dedicated cloud verifier cluster</li>
+          <li>FIPS 140-2 Level 3 HSM keys</li>
+          <li>Custom domain signing (DNS / DID)</li>
+          <li>Dedicated solutions engineer</li>
+        </ul>
+        <button class="btn btn-outline" onclick="openConsoleGate()">Contact Sales</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commercial Customer Console & Business Management Layer -->
+  <section class="section" id="console-section" style="border-top: 1px solid var(--border); padding-top: 4rem;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 2rem;">
+      <div>
+        <span class="logo-badge" style="background:rgba(16,185,129,0.15); color:var(--success); border-color:var(--success); margin-bottom:0.5rem; display:inline-block;">Verified Attention Protocol</span>
+        <h2 style="font-size: 2.2rem; font-weight: 800; color: #fff;">Customer Console &amp; Developer Hub</h2>
+        <p style="color:var(--text-muted); font-size:1rem; margin-top:0.25rem;">Manage API keys, configure custom verification policies, audit signed proofs, and monitor settlement clearing.</p>
+      </div>
+      <div>
+        <span class="status-tag active">Organization: Community Demo</span>
+      </div>
+    </div>
+
+    <!-- Gated Container Wrapper -->
+    <div id="console-wrapper" class="gated-container">
+      
+      <!-- Overlay Gate (Visible when not authenticated) -->
+      <div id="console-gate-overlay" class="gate-card-overlay">
+        <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔒</div>
+        <h3 style="color:#fff; font-size:1.4rem; margin-bottom:0.5rem;">Enterprise Console Gated</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
+          Access to production API keys, policy deployment, and billing ledgers requires enterprise organization credentials or developer sandbox access.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <button class="btn btn-primary" onclick="openAuthModal('signup')" style="justify-content:center;">
+            ⚡ Create Free Sandbox Account
+          </button>
+          <button class="btn btn-outline" onclick="openAuthModal('login')" style="justify-content:center;">
+            Sign In with Existing Account
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Gated Inner Body (blurred until unlocked) -->
+      <div id="console-inner-body" class="gate-blur">
+        <div class="console-app-container">
+          <!-- Workspace Sidebar -->
+          <aside class="console-sidebar">
+            <div class="sidebar-org-header">
+              <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;">
+                <div style="width:30px; height:30px; border-radius:6px; background:linear-gradient(135deg, #2563eb, #38bdf8); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.85rem; color:#fff;">K</div>
+                <div>
+                  <div id="sidebar-org-name" style="font-weight:700; font-size:0.95rem; color:#fff; line-height:1.2;">Karakana Global</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Enterprise Workspace</div>
+                </div>
+              </div>
+              <span class="status-tag active" style="font-size:0.7rem; padding:0.15rem 0.4rem;">Live Clearing Active</span>
+            </div>
+
+            <nav class="sidebar-nav">
+              <button class="sidebar-link active" onclick="switchConsoleTab('tab-overview', this)">
+                <span>📊</span> Metrics &amp; Usage
+              </button>
+              <button class="sidebar-link" onclick="switchConsoleTab('tab-keys', this)">
+                <span>🔑</span> API Keys &amp; Webhooks
+              </button>
+              <button class="sidebar-link" onclick="switchConsoleTab('tab-policies', this)">
+                <span>⚙️</span> Policy Studio
+              </button>
+              <button class="sidebar-link" onclick="switchConsoleTab('tab-proofs', this)">
+                <span>📜</span> Proof Explorer
+              </button>
+              <button class="sidebar-link" onclick="switchConsoleTab('tab-billing', this)">
+                <span>💳</span> Billing &amp; Settlement
+              </button>
+            </nav>
+
+            <div class="sidebar-footer">
+              <div style="margin-bottom:0.75rem;">
+                <div style="font-size:0.75rem; color:var(--text-muted);">Signed in as:</div>
+                <div id="sidebar-user-email" style="font-size:0.85rem; color:#fff; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">developer@karakana.io</div>
+              </div>
+              <button class="btn btn-outline" style="width:100%; font-size:0.8rem; padding:0.45rem; justify-content:center;" onclick="handleLogout()">Sign Out</button>
+              <a href="#how-it-works" style="display:block; text-align:center; font-size:0.75rem; color:var(--text-muted); margin-top:0.75rem; text-decoration:none;">&larr; Protocol Overview</a>
+            </div>
+          </aside>
+
+          <!-- Console Main Content -->
+          <main class="console-main-content">
+            <!-- Tab 1: Overview & Metrics -->
+            <div id="tab-overview" class="tab-content active">
+          <div class="grid-3" style="margin-bottom:2rem;">
+            <div class="card">
+              <div class="metric-sub">Verified Sessions (MTD)</div>
+              <div class="metric-stat" id="stat-sessions">142,850</div>
+              <div class="metric-sub" style="color:var(--success);">↑ 18.4% vs last month</div>
+            </div>
+            <div class="card">
+              <div class="metric-sub">Fraud &amp; Bots Intercepted</div>
+              <div class="metric-stat" style="color:#f87171;" id="stat-fraud">38,120</div>
+              <div class="metric-sub" style="color:var(--text-muted);">21.0% bot traffic filtered</div>
+            </div>
+            <div class="card">
+              <div class="metric-sub">Estimated Ad Spend Saved</div>
+              <div class="metric-stat" style="color:#60a5fa;" id="stat-saved">$76,240</div>
+              <div class="metric-sub" style="color:var(--text-muted);">Zero-bot verification guarantee</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: API Keys -->
+        <div id="tab-keys" class="tab-content">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div>
+              <h3 style="color:#fff;">Production &amp; Sandbox API Keys</h3>
+              <p style="color:var(--text-muted); font-size:0.9rem;">Authenticate your client SDKs and backend verification requests.</p>
+            </div>
+            <button class="btn btn-primary" onclick="generateApiKey()">+ Generate New Key</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Key Name</th>
+                  <th>Token Prefix</th>
+                  <th>Rate Limit</th>
+                  <th>Created</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="api-keys-table">
+                <tr>
+                  <td><strong>Primary Production Ingestion</strong></td>
+                  <td><code>vae_live_9a7d4f...</code></td>
+                  <td>10,000 req/min</td>
+                  <td>Oct 10, 2026</td>
+                  <td><span class="status-tag active">ACTIVE</span></td>
+                  <td>
+                    <button class="copy-btn" onclick="copySnippet('vae_live_9a7d4f61e892b1a0c4', this)">Copy Full Key</button>
+                    <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem;" onclick="revokeKey(this)">Revoke</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Local Staging / Development</strong></td>
+                  <td><code>vae_test_3b2e11...</code></td>
+                  <td>500 req/min</td>
+                  <td>Oct 12, 2026</td>
+                  <td><span class="status-tag active">ACTIVE</span></td>
+                  <td>
+                    <button class="copy-btn" onclick="copySnippet('vae_test_3b2e11ac9941de55b2', this)">Copy Full Key</button>
+                    <button class="btn btn-outline" style="padding:0.2rem 0.5rem; font-size:0.75rem;" onclick="revokeKey(this)">Revoke</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Policy Studio -->
+        <div id="tab-policies" class="tab-content">
+          <div class="card" style="margin-bottom:2rem;">
+            <h3 style="color:#fff; margin-bottom:1rem;">Policy Studio &bull; Visual Threshold Builder</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">Configure mathematical criteria required for your content before the engine issues a Proof of Attention.</p>
+            
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+              <div>
+                <div class="form-group">
+                  <label class="form-label">Policy Identifier</label>
+                  <input type="text" id="policy-id-input" class="form-control" value="custom-enterprise-v1">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Min Cognitive Dwell Time (Seconds)</label>
+                  <input type="number" id="policy-dwell-input" class="form-control" value="30" min="5" max="300">
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                  <label class="form-label">Min Calibrated Confidence Threshold</label>
+                  <input type="number" id="policy-conf-input" class="form-control" value="0.90" step="0.01" min="0.5" max="0.99">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Required Evidence Types</label>
+                  <div style="display:flex; gap:1rem; margin-top:0.5rem; font-size:0.9rem;">
+                    <label><input type="checkbox" checked disabled> E-INTERACTION</label>
+                    <label><input type="checkbox" checked disabled> E-VISIBLE</label>
+                    <label><input type="checkbox" checked> E-DURATION</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveCustomPolicy()" style="margin-top:1rem;">Save &amp; Deploy Policy</button>
+          </div>
+        </div>
+
+        <!-- Tab 4: Proof Audit Explorer -->
+        <div id="tab-proofs" class="tab-content">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <div>
+              <h3 style="color:#fff;">Cryptographic Proof Audit Explorer</h3>
+              <p style="color:var(--text-muted); font-size:0.9rem;">Inspect and export unforgeable Ed25519-signed verification tokens.</p>
+            </div>
+            <button class="btn btn-outline" onclick="exportProofAuditCSV()">📥 Export Audit CSV</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Proof Identifier</th>
+                  <th>Content / Document</th>
+                  <th>Confidence</th>
+                  <th>Signature (Ed25519)</th>
+                  <th>State</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="proof-audit-table">
+                <tr>
+                  <td><code>urn:vap:proof:71e08fb9</code></td>
+                  <td>article_compliance_101</td>
+                  <td><strong style="color:var(--success);">94.0%</strong></td>
+                  <td><code>ed25519_sig_7f8a3d...</code></td>
+                  <td><span class="status-tag active">PUBLISHED</span></td>
+                  <td>Just now</td>
+                </tr>
+                <tr>
+                  <td><code>urn:vap:proof:c89e1a20</code></td>
+                  <td>video_training_hipaa_04</td>
+                  <td><strong style="color:var(--success);">96.5%</strong></td>
+                  <td><code>ed25519_sig_10da55...</code></td>
+                  <td><span class="status-tag active">PUBLISHED</span></td>
+                  <td>12 mins ago</td>
+                </tr>
+                <tr>
+                  <td><code>urn:vap:proof:04a2dd89</code></td>
+                  <td>sponsored_article_bmw_q4</td>
+                  <td><strong style="color:var(--success);">91.2%</strong></td>
+                  <td><code>ed25519_sig_ee48a1...</code></td>
+                  <td><span class="status-tag active">PUBLISHED</span></td>
+                  <td>48 mins ago</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 5: Billing & Settlement -->
+        <div id="tab-billing" class="tab-content">
+          <div class="grid-3" style="margin-bottom:2rem;">
+            <div class="card">
+              <div class="metric-sub">Current Plan</div>
+              <div class="metric-stat" style="font-size:1.8rem; color:#fff;">Enterprise SaaS</div>
+              <div class="metric-sub">$0.002 per verified proof</div>
+            </div>
+            <div class="card">
+              <div class="metric-sub">Estimated Monthly Invoice</div>
+              <div class="metric-stat" style="color:var(--success); font-size:1.8rem;">$285.70</div>
+              <div class="metric-sub">Based on 142,850 verified proofs</div>
+            </div>
+            <div class="card">
+              <div class="metric-sub">Settlement Clearing Take-Rate</div>
+              <div class="metric-stat" style="color:#60a5fa; font-size:1.8rem;">2.5%</div>
+              <div class="metric-sub">Programmatic clearinghouse fee</div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Creation Modal Widget -->
+  <div id="key-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="color:#fff; margin:0;">New API Key Generated</h3>
+        <button style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;" onclick="closeKeyModal()">&times;</button>
+      </div>
+      <p style="color:var(--text-muted); font-size:0.9rem;">
+        Please save this key now. For your security, this full token secret will not be shown again.
+      </p>
+      
+      <div class="key-display-box">
+        <code id="modal-key-value">vae_live_...</code>
+        <button id="modal-copy-btn" class="copy-btn" onclick="copyModalKey()">
+          📋 Copy
+        </button>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+        <button class="btn btn-primary" onclick="closeKeyModal()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Authentication (Login / Signup) Modal -->
+  <div id="auth-modal" class="modal-overlay" style="display:none;">
+    <div class="modal-card" style="max-width: 440px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+        <h3 id="auth-modal-title" style="color:#fff; margin:0;">Sign In to Console</h3>
+        <button style="background:transparent; border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer;" onclick="closeAuthModal()">&times;</button>
+      </div>
+
+      <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Work Email</label>
+          <input type="email" id="auth-email-input" class="form-control" placeholder="developer@karakana.io" required value="developer@karakana.io">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="auth-password-input" class="form-control" placeholder="••••••••••••" required value="demo-password">
+        </div>
+
+        <div id="auth-org-group" class="form-group" style="display:none;">
+          <label class="form-label">Organization Name</label>
+          <input type="text" id="auth-org-input" class="form-control" placeholder="Acme Digital Media" value="Community Org">
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem;">
+          <button type="button" id="auth-toggle-mode-btn" style="background:transparent; border:none; color:var(--accent); font-size:0.85rem; cursor:pointer; padding:0;" onclick="toggleAuthMode()">
+            Need an account? Sign Up
+          </button>
+          <button type="submit" id="auth-submit-btn" class="btn btn-primary">
+            Sign In
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Karakana Labs. Open source under Apache-2.0 &amp; CC0.</p>
+    <p style="margin-top: 0.5rem;">
+      <a href="/whitepaper.pdf" target="_blank">Whitepaper</a> &bull;
+      <a href="https://github.com/moinonin/verified-attention" target="_blank">GitHub</a> &bull;
+      <a href="#downloads">Open Source Downloads</a> &bull;
+      <a href="/api/v1/policies">Policies API</a>
+    </p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

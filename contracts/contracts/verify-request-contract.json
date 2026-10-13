@@ -1,0 +1,46 @@
+{
+  "consumer": {
+    "name": "verified-attention-api"
+  },
+  "provider": {
+    "name": "verified-attention-verifier"
+  },
+  "interactions": [
+    {
+      "description": "Verify a session proof",
+      "providerState": "proof exists for session",
+      "request": {
+        "method": "POST",
+        "path": "/verify",
+        "headers": {
+          "Content-Type": "application/json",
+          "x-correlation-id": "test-corr-001"
+        },
+        "body": {
+          "sessionId": "sess-verify-001",
+          "proofId": "proof-001",
+          "evidenceIds": ["evid-001"]
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "verificationId": "verif-001",
+          "status": "PASSED",
+          "confidence": 0.98,
+          "reasons": ["Evidence validated"],
+          "failures": [],
+          "evidenceGaps": []
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  }
+}

@@ -1,0 +1,64 @@
+task_id: proof-verification
+summary: "Independently verify a Proof of Attention's Ed25519 signature and hash without the verifier's private key"
+depends_on: ["proof-signing-service", "implement-proof-of-attention"]
+local_goals:
+  - id: L1
+    description: "verifyProofSignature() returns true for a proof signed by the matching public key"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=verify-signature-valid
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L2
+    description: "verifyProofSignature() returns false for a tampered proof or mismatched key"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=verify-signature-invalid
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L3
+    description: "verifyProofHash() recomputes the SHA-256 over 7 mandatory fields and matches the stored evidenceHash"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=verify-hash
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L4
+    description: "verifyProof() returns a ProofValidationResult with valid=true for a correctly signed + published proof"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=verify-proof-full
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L5
+    description: "verifyProof() returns valid=false for a revoked or expired proof"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/verification -- --testPathPattern=verify-proof-invalid-state
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L6
+    description: "Proof verification module exists with exported verifyProof function"
+    verification:
+      type: file_exists
+      path: packages/verification/src/verify.ts
+      expect:
+        content_contains: "export function verifyProof"
+  - id: L7
+    description: "Verification package typecheck passes with verify module"
+    verification:
+      type: cli
+      command: pnpm typecheck --filter=@verified-attention/verification
+      expect:
+        exit_code: 0
+global_goals_refs: ["G5", "G13"]
+context:
+  language: TypeScript
+  framework: Express
+  orm: Prisma
+  test_framework: Vitest

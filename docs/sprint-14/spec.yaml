@@ -1,0 +1,72 @@
+task_id: sprint-14-security-hardening
+summary: "Production-grade security posture — auth, authz, secrets, encryption, TLS, pentest"
+depends_on: ["sprint-13-analytics-observability"]
+local_goals:
+  - id: L1
+    description: "CREATE: Authentication (OAuth2/OIDC, API keys, mTLS) in packages/auth/"
+    verification:
+      type: file_exists
+      path: "packages/auth/src/index.ts"
+      expect:
+        content_contains: "AuthProvider"
+  - id: L2
+    description: "CREATE: Authorization (RBAC: admin, operator, reviewer, consumer, publisher) in packages/auth/rbac.ts"
+    verification:
+      type: file_exists
+      path: "packages/auth/rbac.ts"
+      expect:
+        content_contains: "RBAC"
+  - id: L3
+    description: "CREATE: Secrets management (Vault/cloud secrets, rotation) in packages/security/secrets/"
+    verification:
+      type: file_exists
+      path: "packages/security/secrets/src/index.ts"
+      expect:
+        content_contains: "SecretsManager"
+  - id: L4
+    description: "CREATE: Encryption at rest (evidence store, proof store, analytics warehouse) in packages/security/encryption-at-rest/"
+    verification:
+      type: file_exists
+      path: "packages/security/encryption-at-rest/src/index.ts"
+      expect:
+        content_contains: "EncryptionAtRest"
+  - id: L5
+    description: "CREATE: TLS everywhere (internal mTLS, external TLS 1.3) in packages/security/tls/"
+    verification:
+      type: file_exists
+      path: "packages/security/tls/src/index.ts"
+      expect:
+        content_contains: "TLSManager"
+  - id: L6
+    description: "VERIFY: Penetration test report (internal + external) in docs/security/pentest-report.md"
+    verification:
+      type: file_exists
+      path: "docs/security/pentest-report.md"
+      expect:
+        content_contains: "Critical"
+  - id: L7
+    description: "VERIFY: Dependency scan (SBOM, CVE monitoring, license compliance) in docs/security/sbom.json"
+    verification:
+      type: file_exists
+      path: "docs/security/sbom.json"
+      expect:
+        content_contains: "components"
+  - id: L8
+    description: "CREATE: Security headers, CSP, rate limiting, WAF rules in apps/api/src/security/"
+    verification:
+      type: file_exists
+      path: "apps/api/src/security/index.ts"
+      expect:
+        content_contains: "SecurityMiddleware"
+  - id: L9
+    description: "VERIFY: OWASP ASVS Level 2 compliance"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/security -- --testPathPattern=asvs"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  test_framework: Vitest

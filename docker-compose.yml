@@ -1,0 +1,180 @@
+services:
+  # Web Portal, Whitepaper & Interactive Explorer
+  portal:
+    build:
+      context: .
+      dockerfile: apps/portal/Dockerfile
+    container_name: vae-portal
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - VAP_API_URL=http://api:3000
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - vae-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Public REST & Event Ingestion API
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: vae-api
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      jaeger:
+        condition: service_started
+    networks:
+      - vae-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:3000/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # ML Attention Scoring & Drift Detection Service
+  ml-serving:
+    build:
+      context: .
+      dockerfile: apps/ml-serving/Dockerfile
+    container_name: vae-ml-serving
+    ports:
+      - "8085:8085"
+    environment:
+      - NODE_ENV=development
+      - PORT=8085
+      - HOST=0.0.0.0
+    networks:
+      - vae-net
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:8085/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Python Ingestion & Analytics Backend
+  python-backend:
+    build:
+      context: .
+      dockerfile: scripts/Dockerfile
+    container_name: vae-python-backend
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002
+      - HOST=0.0.0.0
+      - DATA_DIR=/app/data
+    volumes:
+      - vae-shared-data:/app/data
+    networks:
+      - vae-net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Verification Engine (Library, Replay & Review Queue Worker Daemon)
+  verifier:
+    build:
+      context: .
+      dockerfile: apps/verifier/Dockerfile
+    container_name: vae-verifier
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+    networks:
+      - vae-net
+
+  # Settlement Worker (Queue Processor & Reconciliation)
+  settlement-worker:
+    build:
+      context: .
+      dockerfile: packages/reward/settlement/Dockerfile
+    container_name: vae-settlement-worker
+    command: ["run"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+    networks:
+      - vae-net
+
+  # PostgreSQL Data Store
+  postgres:
+    image: postgres:16-alpine
+    container_name: vae-postgres
+    environment:
+      POSTGRES_USER: vae
+      POSTGRES_PASSWORD: vae-dev
+      POSTGRES_DB: verified_attention
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - vae-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vae"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Redis Message Broker & Cache
+  redis:
+    image: redis:7-alpine
+    container_name: vae-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - vae-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # Jaeger Distributed Tracing & Observability
+  jaeger:
+    image: jaegertracing/all-in-one:1.55
+    container_name: vae-jaeger
+    ports:
+      - "16686:16686"  # Web UI
+      - "4317:4317"    # OTLP gRPC
+      - "4318:4318"    # OTLP HTTP
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    networks:
+      - vae-net
+
+volumes:
+  postgres-data:
+  vae-shared-data:
+
+networks:
+  vae-net:
+    driver: bridge

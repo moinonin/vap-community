@@ -1,0 +1,74 @@
+# Python
+.venv
+.env
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+githeri/.venv/
+# Node.js
+node_modules/
+apps/node_modules/
+apps/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript build outputs (all packages)
+packages/*/dist/
+packages/*/coverage/
+packages/*/tsconfig.tsbuildinfo
+
+# Apps build outputs
+apps/*/dist/
+apps/*/coverage/
+
+# Prototype data
+data/evidence_store.jsonl
+
+# Calibration plots
+calibration_*.png
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Turbo
+.turbo/
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Session artifacts / temporary logs
+failurelogs
+Dockerfile.test
+
+# Package manager stores & caches
+.pnpm-store/
+.node-gyp-cache/
+
+# OS noise
+.DS_Store
+
+# Hidden agent tracking (user-requested — keep tracked by design; not excluded)

@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "skipLibCheck": true,
+    "composite": true
+  },
+  "include": [
+    "*/tsconfig.json"
+  ],
+  "references": [
+    {
+      "path": "./browser"
+    },
+    {
+      "path": "./mobile"
+    },
+    {
+      "path": "./desktop"
+    },
+    {
+      "path": "./extension"
+    }
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".turbo"
+  ]
+}

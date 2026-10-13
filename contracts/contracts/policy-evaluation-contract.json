@@ -1,0 +1,50 @@
+{
+  "consumer": {
+    "name": "verified-attention-verifier"
+  },
+  "provider": {
+    "name": "verified-attention-verification"
+  },
+  "interactions": [
+    {
+      "description": "Evaluate policy with evidence",
+      "providerState": "policy and evidence available",
+      "request": {
+        "method": "POST",
+        "path": "/evaluate-policy",
+        "headers": {
+          "Content-Type": "application/json",
+          "x-correlation-id": "test-corr-002"
+        },
+        "body": {
+          "policyId": "POLICY-001",
+          "evidenceCount": 3,
+          "inputContext": {
+            "sessionId": "sess-eval-001",
+            "userAgent": "test"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "passed": true,
+          "reasons": ["Evidence sufficient"],
+          "failures": [],
+          "warnings": [],
+          "outcome": "PASS",
+          "confidence": 0.95,
+          "evidenceGaps": []
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "4.0"
+    }
+  }
+}

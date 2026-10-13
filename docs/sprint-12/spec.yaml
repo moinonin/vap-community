@@ -1,0 +1,58 @@
+task_id: sprint-12-reward-intelligence
+summary: "Reward recommendation engine — eligibility, pricing, budget, ledger prep"
+depends_on: ["sprint-11-proof-generation-production"]
+local_goals:
+  - id: L1
+    description: "CREATE: Eligibility engine (policy match, proof validation, deduplication) in packages/reward/eligibility/"
+    verification:
+      type: file_exists
+      path: "packages/reward/eligibility/src/index.ts"
+      expect:
+        content_contains: "EligibilityEngine"
+  - id: L2
+    description: "CREATE: Campaign policy engine (budget, pricing rules, caps, targeting) in packages/reward/campaigns/"
+    verification:
+      type: file_exists
+      path: "packages/reward/campaigns/src/index.ts"
+      expect:
+        content_contains: "CampaignEngine"
+  - id: L3
+    description: "CREATE: Dynamic pricing (attention value by content type, viewer quality, market) in packages/reward/pricing/"
+    verification:
+      type: file_exists
+      path: "packages/reward/pricing/src/index.ts"
+      expect:
+        content_contains: "calculatePrice"
+  - id: L4
+    description: "CREATE: Budget allocation (pacing, caps, rollover, exhaustion) in packages/reward/budget/"
+    verification:
+      type: file_exists
+      path: "packages/reward/budget/src/index.ts"
+      expect:
+        content_contains: "BudgetAllocator"
+  - id: L5
+    description: "CREATE: Settlement preparation (ledger entries, export formats, reconciliation) in packages/reward/settlement/"
+    verification:
+      type: file_exists
+      path: "packages/reward/settlement/src/index.ts"
+      expect:
+        content_contains: "prepareSettlement"
+  - id: L6
+    description: "VERIFY: Conformance - Reward recommendations traceable to proofs & policies"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/conformance -- --testPathPattern=reward"
+      expect:
+        exit_code: 0
+  - id: L7
+    description: "VERIFY: Integration - Proof → eligibility → pricing → budget → settlement prep"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/reward -- --testPathPattern=reward-flow"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  test_framework: Vitest

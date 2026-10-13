@@ -1,0 +1,49 @@
+{
+  "name": "verified-attention",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "packages/pipeline/*",
+    "packages/observability/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:conformance": "turbo run test:conformance",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,yml,yaml}\"",
+    "contract:test": "node contracts/contract-tests/contract-test.js",
+    "contract:provider-verify": "node contracts/contract-tests/provider-verify.js",
+    "test:integration": "node contracts/contract-tests/integration-cicd.js",
+    "openapi:generate": "turbo run openapi:generate",
+    "sdk:generate": "turbo run sdk:generate",
+    "clean": "turbo run clean && rm -rf node_modules .turbo",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "turbo run build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@eslint/js": "^10.0.1",
+    "@rolldown/binding-linux-arm64-gnu": "1.2.0",
+    "@types/node": "^20.19.43",
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
+    "@typescript-eslint/parser": "^8.65.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "eslint": "^10.7.0",
+    "prettier": "^3.2.5",
+    "turbo": "^1.12.4",
+    "typescript": "^5.3.3",
+    "typescript-eslint": "^8.65.0",
+    "vitest": "1.6.1",
+    "tsdown": "^0.22.14"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

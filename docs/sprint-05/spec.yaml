@@ -1,0 +1,99 @@
+task_id: sprint-5-verification-engine-core-policy
+summary: "Implement verification decision engine with configurable policies: Claim model, Confidence Model, Verification Engine, Policy Engine, outcome codes, conformance tests, integration tests."
+depends_on: ["sprint-4-vap-spec-finalization-conformance"]
+language: TypeScript
+framework: Node.js
+test_framework: Vitest
+packages:
+  - "@verified-attention/core"     # Claim model (VAP §7)
+  - "@verified-attention/verification"  # Confidence, Engine, Policy, Outcomes, Keys, HSM, Audit, Signing, Verify
+acceptance:
+  - "Claim model (VAP §7) exported from @verified-attention/core/claim with types, schemas, create/transition/validate functions"
+  - "Confidence Model (VAP §8) with calibration interface (IdentityCalibrator, IsotonicCalibrator) in @verified-attention/verification/confidence"
+  - "Verification Engine (VAP §9) in @verified-attention/verification/engine with VerificationEngine class, lifecycle: evidence→claims→confidence→decision"
+  - "Policy Engine (VAE §10) in @verified-attention/verification/policy with JSON policy config, threshold evaluation, InMemoryPolicyStore"
+  - "Verification outcome codes (PASS, FAIL, INSUFFICIENT, PENDING) with semantics and transition logic in @verified-attention/verification/outcomes"
+  - "Conformance tests: 17 tests covering schema validation, core logic, confidence, policy, edge cases, determinism"
+  - "Integration tests: 9 tests covering PASS, PENDING, INSUFFICIENT, FAIL, progressive evidence, streaming, determinism, custom policies"
+  - "All tests pass with typecheck + build"
+
+local_goals:
+  - id: L1
+    description: "INSPECT: Claim model in packages/core/src/claim.ts - verify exports and state machine"
+    verification:
+      type: cli
+      command: "test -f packages/core/src/claim.ts && grep -q 'export enum ClaimState' packages/core/src/claim.ts"
+      expect:
+        exit_code: 0
+
+  - id: L2
+    description: "INSPECT: Confidence model in packages/verification/src/confidence.ts - verify calibration interface"
+    verification:
+      type: cli
+      command: "test -f packages/verification/src/confidence.ts && grep -q 'IdentityCalibrator\\|IsotonicCalibrator' packages/verification/src/confidence.ts"
+      expect:
+        exit_code: 0
+
+  - id: L3
+    description: "INSPECT: Verification engine in packages/verification/src/engine.ts - verify VerificationEngine class"
+    verification:
+      type: cli
+      command: "test -f packages/verification/src/engine.ts && grep -q 'class VerificationEngine' packages/verification/src/engine.ts"
+      expect:
+        exit_code: 0
+
+  - id: L4
+    description: "INSPECT: Policy engine in packages/verification/src/policy.ts - verify evaluatePolicy and store"
+    verification:
+      type: cli
+      command: "test -f packages/verification/src/policy.ts && grep -q 'evaluatePolicy\\|InMemoryPolicyStore' packages/verification/src/policy.ts"
+      expect:
+        exit_code: 0
+
+  - id: L5
+    description: "INSPECT: Outcome codes in packages/verification/src/outcomes.ts - verify PASS/FAIL/INSUFFICIENT/PENDING semantics"
+    verification:
+      type: cli
+      command: "test -f packages/verification/src/outcomes.ts && grep -q 'determineOutcome\\|PASS\\|FAIL\\|INSUFFICIENT\\|PENDING' packages/verification/src/outcomes.ts"
+      expect:
+        exit_code: 0
+
+  - id: L6
+    description: "INSPECT: Conformance tests in packages/verification/tests/verification-conformance.test.ts"
+    verification:
+      type: cli
+      command: "test -f packages/verification/tests/verification-conformance.test.ts && grep -c 'it(' packages/verification/tests/verification-conformance.test.ts"
+      expect:
+        exit_code: 0
+
+  - id: L7
+    description: "INSPECT: Integration tests in packages/verification/tests/integration-verification-flow.test.ts"
+    verification:
+      type: cli
+      command: "test -f packages/verification/tests/integration-verification-flow.test.ts && grep -c 'it(' packages/verification/tests/integration-verification-flow.test.ts"
+      expect:
+        exit_code: 0
+
+  - id: L8
+    description: "VERIFY: Typecheck @verified-attention/core + @verified-attention/verification"
+    verification:
+      type: cli
+      command: "pnpm --filter @verified-attention/core typecheck && pnpm --filter @verified-attention/verification typecheck"
+      expect:
+        exit_code: 0
+
+  - id: L9
+    description: "VERIFY: Build @verified-attention/core + @verified-attention/verification"
+    verification:
+      type: cli
+      command: "pnpm --filter @verified-attention/core build && pnpm --filter @verified-attention/verification build"
+      expect:
+        exit_code: 0
+
+  - id: L10
+    description: "VERIFY: All tests pass for core, verification, conformance"
+    verification:
+      type: cli
+      command: "pnpm --filter @verified-attention/core test && pnpm --filter @verified-attention/verification test && pnpm --filter @verified-attention/conformance test"
+      expect:
+        exit_code: 0

@@ -1,0 +1,95 @@
+{
+  "sbom": "SPDX-2.3",
+  "generated": "2026-09-17T00:00:00Z",
+  "components": [
+    {
+      "name": "@verified-attention/core",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Core VAP types: Evidence, Observation, Session, Claim, Proof",
+      "dependencies": ["zod@^3.22.4"]
+    },
+    {
+      "name": "@verified-attention/pipeline",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Evidence processing pipeline",
+      "dependencies": ["@verified-attention/core", "@verified-attention/store", "zod@^3.22.4"]
+    },
+    {
+      "name": "@verified-attention/verification",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Verification engine, confidence scoring, HSM integration",
+      "dependencies": ["@verified-attention/core", "@verified-attention/store", "zod@^3.22.4"]
+    },
+    {
+      "name": "@verified-attention/crypto-hsm",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "HSM/Cloud KMS integration for proof signing",
+      "dependencies": ["@verified-attention/core", "crypto (Node.js built-in)"]
+    },
+    {
+      "name": "@verified-attention/reward-eligibility",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Reward eligibility engine",
+      "dependencies": ["@verified-attention/core", "@verified-attention/verification", "zod@^3.22.4"]
+    },
+    {
+      "name": "@verified-attention/reward-campaigns",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Campaign policy engine",
+      "dependencies": ["zod@^3.22.4"]
+    },
+    {
+      "name": "@verified-attention/reward-pricing",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Dynamic pricing engine",
+      "dependencies": ["zod@^3.22.4"]
+    },
+    {
+      "name": "@verified-attention/reward-budget",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Budget allocation engine",
+      "dependencies": ["zod@^3.22.4"]
+    },
+    {
+      "name": "@verified-attention/reward-settlement",
+      "version": "0.1.0-dev",
+      "license": "Apache-2.0",
+      "description": "Settlement preparation engine",
+      "dependencies": ["@verified-attention/reward-campaigns", "@verified-attention/reward-eligibility", "@verified-attention/reward-pricing", "@verified-attention/reward-budget", "zod@^3.22.4"]
+    },
+    {
+      "name": "zod",
+      "version": "3.22.4",
+      "license": "MIT",
+      "description": "Schema validation library",
+      "purl": "pkg:npm/zod@3.22.4"
+    },
+    {
+      "name": "vitest",
+      "version": "1.0.0",
+      "license": "MIT",
+      "description": "Test framework",
+      "purl": "pkg:npm/vitest@1.0.0"
+    },
+    {
+      "name": "typescript",
+      "version": "5.3.0",
+      "license": "Apache-2.0",
+      "description": "TypeScript compiler",
+      "purl": "pkg:npm/typescript@5.3.0"
+    }
+  ],
+  "vulnerabilities": [],
+  "licenses": {
+    "primary": "Apache-2.0",
+    "notices": "All original copyright notices retained from dependencies"
+  }
+}

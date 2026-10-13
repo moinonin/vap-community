@@ -1,0 +1,72 @@
+task_id: proof-store
+summary: "Append-only proof store indexed by proofId, sessionId, and contentId with query API"
+depends_on: ["proof-signing-service"]
+local_goals:
+  - id: L1
+    description: "storeProof() writes a signed proof to the append-only store and returns the stored proof with storage metadata"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/store -- --testPathPattern=store-proof
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L2
+    description: "storeProof() rejects the same proofId twice (append-only, no overwrite)"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/store -- --testPathPattern=store-duplicate
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L3
+    description: "getProofById() retrieves a proof by proofId"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/store -- --testPathPattern=get-proof
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L4
+    description: "listProofsBySession() returns all proofs for a given sessionId, ordered by issuedAt descending"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/store -- --testPathPattern=list-by-session
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L5
+    description: "listProofsByContent() returns all proofs for a given contentId"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/store -- --testPathPattern=list-by-content
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L6
+    description: "Stored proofs are immutable — updating or deleting a proof throws"
+    verification:
+      type: cli
+      command: pnpm test --filter=@verified-attention/store -- --testPathPattern=immutable
+      expect:
+        exit_code: 0
+        stdout_contains: "passing"
+  - id: L7
+    description: "Proof store module exists with storeProof exported"
+    verification:
+      type: file_exists
+      path: packages/store/src/proof-store.ts
+      expect:
+        content_contains: "export function storeProof"
+  - id: L8
+    description: "Store package typecheck passes with proof store module"
+    verification:
+      type: cli
+      command: pnpm typecheck --filter=@verified-attention/store
+      expect:
+        exit_code: 0
+global_goals_refs: ["G5", "G13"]
+context:
+  language: TypeScript
+  framework: Express
+  orm: Prisma
+  test_framework: Vitest

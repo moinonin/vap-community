@@ -1,0 +1,19 @@
+# Ruff configuration for verified-attention
+target-version = "py311"
+line-length = 120
+
+[lint]
+select = [
+    "E4",   # Imports / syntax
+    "E7",   # Statements
+    "E9",   # Runtime errors
+    "F",    # Pyflakes
+]
+ignore = [
+    "E501", # Line length handled by formatter
+    "E741", # Ambiguous variable name
+    "E402", # Module level import not at top of file
+]
+
+[lint.per-file-ignores]
+"scripts/*" = ["ALL"]

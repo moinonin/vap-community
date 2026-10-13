@@ -1,0 +1,44 @@
+task_id: implement-proof-of-attention
+summary: "Implement the Proof of Attention object with all 7 mandatory fields and a state machine"
+depends_on: ["stage-1-core-models", "stage-2-pipeline"]
+local_goals:
+  - id: L1
+    description: "Define the ProofOfAttention class with all 7 mandatory fields"
+    verification:
+      type: manual
+      description: "The ProofOfAttention class should have properties for proofId, sessionId, contentId, confidence, evidenceHash, verifierId, and signature."
+  - id: L2
+    description: "Implement serialization method for ProofOfAttention"
+    verification:
+      type: manual
+      description: "The ProofOfAttention class should include a serialize method that returns the object as a JSON string."
+  - id: L3
+    description: "Implement hash computation method for ProofOfAttention"
+    verification:
+      type: manual
+      description: "The ProofOfAttention class should include a computeHash method that computes and sets the evidenceHash based on the object's properties."
+  - id: L4
+    description: "Implement state machine logic for ProofOfAttention"
+    verification:
+      type: manual
+      description: "The ProofOfAttention class should have methods to transition between states: from UNSIGNED to SIGNED, then to PUBLISHED/REVOKED/EXPIRED."
+  - id: L5
+    description: "Test state transitions and hash computation"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/api -- --testPathPattern=proof-of-attention-state-machine"
+      expect:
+        exit_code: 0
+  - id: L6
+    description: "Generate the OpenAPI spec for ProofOfAttention endpoints"
+    verification:
+      type: cli
+      command: "npx @redocly/cli lint apps/api/openapi.yaml && grep '/v1/proofs' apps/api/openapi.yaml"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G5", "G13"]
+context:
+  language: TypeScript
+  framework: Express
+  orm: Prisma
+  test_framework: Vitest

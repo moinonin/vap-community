@@ -1,0 +1,65 @@
+task_id: sprint-13-analytics-observability
+summary: "Operational and business analytics dashboards, alerting"
+depends_on: ["sprint-7-pipeline-production-hardening", "sprint-11-proof-generation-production", "sprint-12-reward-intelligence"]
+local_goals:
+  - id: L1
+    description: "CREATE: Analytics data warehouse (columnar, partitioned by time) in packages/analytics/warehouse/"
+    verification:
+      type: file_exists
+      path: "packages/analytics/warehouse/src/index.ts"
+      expect:
+        content_contains: "Warehouse"
+  - id: L2
+    description: "CREATE: Operational metrics (throughput, latency, error rates, queue depths) in packages/observability/ops-metrics/"
+    verification:
+      type: file_exists
+      path: "packages/observability/ops-metrics/src/index.ts"
+      expect:
+        content_contains: "OpsMetrics"
+  - id: L3
+    description: "CREATE: Attention metrics (verified sessions, confidence dist, fraud rates) in packages/analytics/attention-metrics/"
+    verification:
+      type: file_exists
+      path: "packages/analytics/attention-metrics/src/index.ts"
+      expect:
+        content_contains: "AttentionMetrics"
+  - id: L4
+    description: "CREATE: Fraud metrics (detection rates, false positives, new vectors) in packages/analytics/fraud-metrics/"
+    verification:
+      type: file_exists
+      path: "packages/analytics/fraud-metrics/src/index.ts"
+      expect:
+        content_contains: "FraudMetrics"
+  - id: L5
+    description: "CREATE: Business metrics (reward payout, campaign ROI, publisher yield) in packages/analytics/business-metrics/"
+    verification:
+      type: file_exists
+      path: "packages/analytics/business-metrics/src/index.ts"
+      expect:
+        content_contains: "BusinessMetrics"
+  - id: L6
+    description: "CREATE: Alerting rules (PagerDuty/Slack/email) in packages/observability/alerting/"
+    verification:
+      type: file_exists
+      path: "packages/observability/alerting/src/index.ts"
+      expect:
+        content_contains: "AlertRule"
+  - id: L7
+    description: "CREATE: Distributed tracing query UI (Jaeger/Tempo) in packages/observability/tracing-ui/"
+    verification:
+      type: file_exists
+      path: "packages/observability/tracing-ui/src/index.ts"
+      expect:
+        content_contains: "TracingUI"
+  - id: L8
+    description: "VERIFY: Conformance - All metrics queryable via API"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/conformance -- --testPathPattern=analytics-api"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  test_framework: Vitest

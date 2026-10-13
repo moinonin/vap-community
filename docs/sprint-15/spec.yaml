@@ -1,0 +1,65 @@
+task_id: sprint-15-privacy-compliance
+summary: "Full privacy compliance (GDPR, CCPA), data minimisation enforced"
+depends_on: ["sprint-14-security-hardening", "sprint-11-proof-generation-production", "sprint-7-pipeline-production-hardening"]
+local_goals:
+  - id: L1
+    description: "CREATE: Consent management (capture, store, query, revoke per session) in packages/privacy/consent/"
+    verification:
+      type: file_exists
+      path: "packages/privacy/consent/src/index.ts"
+      expect:
+        content_contains: "ConsentManager"
+  - id: L2
+    description: "CREATE: Data minimisation enforcement (schema validation, field stripping) in packages/privacy/minimisation/"
+    verification:
+      type: file_exists
+      path: "packages/privacy/minimisation/src/index.ts"
+      expect:
+        content_contains: "DataMinimiser"
+  - id: L3
+    description: "CREATE: Pseudonymisation (session IDs unlinkable, no PII in evidence) in packages/privacy/pseudonymisation/"
+    verification:
+      type: file_exists
+      path: "packages/privacy/pseudonymisation/src/index.ts"
+      expect:
+        content_contains: "pseudonymise"
+  - id: L4
+    description: "CREATE: Retention policies (evidence: 90d, proofs: 7y, analytics: aggregated only) in packages/privacy/retention/"
+    verification:
+      type: file_exists
+      path: "packages/privacy/retention/src/index.ts"
+      expect:
+        content_contains: "RetentionPolicy"
+  - id: L5
+    description: "CREATE: Data subject rights API (access, rectification, erasure, portability) in apps/api/src/privacy/"
+    verification:
+      type: file_exists
+      path: "apps/api/src/privacy/index.ts"
+      expect:
+        content_contains: "router"
+  - id: L6
+    description: "CREATE: Selective disclosure for proofs (confidence-only, evidence-hash-only) in packages/core/proof/disclosure.ts"
+    verification:
+      type: file_exists
+      path: "packages/core/proof/disclosure.ts"
+      expect:
+        content_contains: "selectiveDisclose"
+  - id: L7
+    description: "VERIFY: Independent privacy audit (DPIA update, legal review) in docs/privacy/dpia-final.md"
+    verification:
+      type: file_exists
+      path: "docs/privacy/dpia-final.md"
+      expect:
+        content_contains: "Auditor"
+  - id: L8
+    description: "VERIFY: Conformance - Privacy requirements from VAP Section 17"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/conformance -- --testPathPattern=privacy"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  test_framework: Vitest

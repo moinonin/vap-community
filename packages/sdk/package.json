@@ -1,0 +1,26 @@
+{
+  "name": "@verified-attention/sdk",
+  "version": "0.1.0-dev",
+  "description": "Verified Attention SDK monorepo (browser, mobile, desktop, extension)",
+  "private": true,
+  "workspaces": [
+    "browser",
+    "mobile", 
+    "desktop",
+    "extension"
+  ],
+  "scripts": {
+    "build": "pnpm --filter @verified-attention/browser-sdk run build && pnpm --filter @verified-attention/mobile-sdk run build && pnpm --filter @verified-attention/desktop-sdk run build && pnpm --filter @verified-attention/extension-sdk run build",
+    "dev": "pnpm --filter @verified-attention/browser-sdk run dev & pnpm --filter @verified-attention/mobile-sdk run dev & pnpm --filter @verified-attention/desktop-sdk run dev & pnpm --filter @verified-attention/extension-sdk run dev",
+    "test": "pnpm --filter @verified-attention/browser-sdk run test && pnpm --filter @verified-attention/mobile-sdk run test && pnpm --filter @verified-attention/desktop-sdk run test && pnpm --filter @verified-attention/extension-sdk run test",
+    "typecheck": "pnpm --filter @verified-attention/browser-sdk run typecheck && pnpm --filter @verified-attention/mobile-sdk run typecheck && pnpm --filter @verified-attention/desktop-sdk run typecheck && pnpm --filter @verified-attention/extension-sdk run typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "tsdown": "^0.11.0",
+    "vitest": "^1.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

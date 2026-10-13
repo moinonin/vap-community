@@ -1,0 +1,38 @@
+{
+  "name": "@verified-attention/auth",
+  "version": "0.1.0-dev",
+  "description": "Authentication - OAuth2/OIDC, API keys, mTLS",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./rbac": {
+      "import": "./rbac.js",
+      "require": "./rbac.js",
+      "types": "./rbac.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "tsdown": "^0.11.13",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

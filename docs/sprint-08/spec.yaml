@@ -1,0 +1,66 @@
+task_id: sprint-8-attention-intelligence
+summary: "Production attention models with continuous learning pipeline — feature engineering, Transformer/GRU training, model serving, drift detection, automated retraining"
+depends_on: ["sprint-7-pipeline-production-hardening"]
+local_goals:
+  - id: L1
+    description: "CREATE: Attention feature engineering in packages/ml/attention/features/ matching research prototype schema"
+    verification:
+      type: file_exists
+      path: "packages/ml/attention/features/src/index.ts"
+      expect:
+        content_contains: "extractAttentionFeatures"
+  - id: L2
+    description: "CREATE: Attention behaviour model (Transformer/GRU) in packages/ml/attention/model/ with AUC ≥ 0.95"
+    verification:
+      type: file_exists
+      path: "packages/ml/attention/model/src/index.ts"
+      expect:
+        content_contains: "AttentionModel"
+  - id: L3
+    description: "CREATE: Model serving (gRPC/REST, batch + streaming) in apps/ml-serving/attention/ with p99 < 50ms"
+    verification:
+      type: file_exists
+      path: "apps/ml-serving/attention/src/index.ts"
+      expect:
+        content_contains: "serve"
+  - id: L4
+    description: "CREATE: Model versioning, A/B routing, canary deployment in apps/ml-serving/infra/"
+    verification:
+      type: file_exists
+      path: "apps/ml-serving/infra/src/index.ts"
+      expect:
+        content_contains: "canary"
+  - id: L5
+    description: "CREATE: Drift detection (KS test, PSI) in packages/ml/attention/drift/"
+    verification:
+      type: file_exists
+      path: "packages/ml/attention/drift/src/index.ts"
+      expect:
+        content_contains: "detectDrift"
+  - id: L6
+    description: "CREATE: Automated retraining pipeline in packages/ml/attention/retrain/"
+    verification:
+      type: file_exists
+      path: "packages/ml/attention/retrain/src/index.ts"
+      expect:
+        content_contains: "retrain"
+  - id: L7
+    description: "VERIFY: Conformance - Model output deterministic for same input (fixed seed)"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/ml-attention -- --testPathPattern=ml-determinism"
+      expect:
+        exit_code: 0
+  - id: L8
+    description: "VERIFY: Integration test - Pipeline → features → model → confidence score"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/pipeline -- --testPathPattern=attention-ml"
+      expect:
+        exit_code: 0
+global_goals_refs: ["G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  ml_framework: "TensorFlow.js + @tensorflow/tfjs-node (or ONNX Runtime)"
+  test_framework: Vitest

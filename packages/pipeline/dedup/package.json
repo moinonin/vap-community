@@ -1,0 +1,33 @@
+{
+  "name": "@verified-attention/pipeline-dedup",
+  "version": "0.1.0-dev",
+  "description": "Deduplication pipeline stage for evidence processing",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "@verified-attention/core": "workspace:*",
+    "xxhashjs": "^0.2.2"
+  },
+  "devDependencies": {
+    "@types/xxhashjs": "^0.2.0",
+    "tsdown": "^0.11.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

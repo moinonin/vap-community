@@ -1,0 +1,4 @@
+proofId,contentId,confidence,signature,state,timestamp
+urn:vap:proof:71e08fb9,article_compliance_101,0.940,ed25519_sig_7f8a3d11,PUBLISHED,2026-10-13T04:46:51Z
+urn:vap:proof:c89e1a20,video_training_hipaa_04,0.965,ed25519_sig_10da5578,PUBLISHED,2026-10-13T04:34:12Z
+urn:vap:proof:04a2dd89,sponsored_article_bmw_q4,0.912,ed25519_sig_ee48a109,PUBLISHED,2026-10-13T03:58:02Z
