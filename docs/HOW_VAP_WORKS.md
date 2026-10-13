@@ -57,9 +57,9 @@ flowchart TD
     end
 
     subgraph ProdMode["Production State (Cloud Scale)"]
-        A2[Web Application] -->|Web Worker (Off Main Thread)| B2[Encrypted Ring Buffer]
-        B2 -->|navigator.sendBeacon / keepalive| C2["Edge CDN / Ingestion Gateway (api.vap.io)"]
-        C2 -->|Kafka / Redis Streams| D2[Real-Time Verifier Pool & Cloud HSM]
+        A2[Web Application] -->|"Web Worker (Off Main Thread)"| B2[Encrypted Ring Buffer]
+        B2 -->|"navigator.sendBeacon / keepalive"| C2["Edge CDN / Ingestion Gateway (api.vap.io)"]
+        C2 -->|"Kafka / Redis Streams"| D2[Real-Time Verifier Pool & Cloud HSM]
     end
 ```
 
