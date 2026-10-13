@@ -311,11 +311,11 @@
 
   <!-- Commercial Customer Console & Business Management Layer -->
   <section class="section" id="console-section" style="border-top: 1px solid var(--border); padding-top: 4rem;">
-    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 2rem;">
+    <div class="console-section-header">
       <div>
         <span class="logo-badge" style="background:rgba(16,185,129,0.15); color:var(--success); border-color:var(--success); margin-bottom:0.5rem; display:inline-block;">Karakana VaaS Enterprise</span>
-        <h2 style="font-size: 2.2rem; font-weight: 800; color: #fff;">Customer Console &amp; Developer Hub</h2>
-        <p style="color:var(--text-muted); font-size:1rem; margin-top:0.25rem;">Manage API keys, configure custom verification policies, audit signed proofs, and monitor settlement clearing.</p>
+        <h2 style="font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800; color: #fff;">Customer Console &amp; Developer Hub</h2>
+        <p style="color:var(--text-muted); font-size:clamp(0.85rem, 2vw, 1rem); margin-top:0.25rem;">Manage API keys, configure custom verification policies, audit signed proofs, and monitor settlement clearing.</p>
       </div>
       <div>
         <span class="status-tag active">Organization: Karakana Global</span>
@@ -566,11 +566,13 @@
               <div class="metric-stat" style="color:#60a5fa; font-size:1.8rem;">2.5%</div>
               <div class="metric-sub">Programmatic clearinghouse fee</div>
             </div>
-          </main>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
-  </section>
+  </div>
+</div>
+</section>
 
   <!-- Key Creation Modal Widget -->
   <div id="key-modal" class="modal-overlay" style="display:none;">
