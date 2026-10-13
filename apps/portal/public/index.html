@@ -157,82 +157,31 @@
         <p style="color:var(--text-muted); font-size:1rem; margin-top:0.25rem;">Free, unmetered, ungated access to all protocol specifications, production container images, SDKs, and reference engines.</p>
       </div>
       <div>
-        <a href="https://github.com/moinonin/verified-attention" target="_blank" class="btn btn-outline">
+        <a href="https://github.com/moinonin/vap-community" target="_blank" class="btn btn-outline">
           ⭐ View GitHub Monorepo &rarr;
         </a>
       </div>
     </div>
 
-    <!-- Downloads Category 1: Official Container Images -->
+    <!-- Downloads Category 1: Local Docker Container Stack -->
     <div style="margin-bottom: 2.5rem;">
       <h3 style="color:#fff; font-size:1.25rem; margin-bottom:0.75rem; display:flex; align-items:center; gap:0.5rem;">
-        <span>🐳</span> Docker Hub Container Images
+        <span>🐳</span> Local Docker Container Cluster
       </h3>
-      <div class="grid-3">
-        <div class="card" style="padding: 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <h4 style="color:#fff; margin:0;">API &amp; Ingestion</h4>
-            <span class="status-tag active">latest</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Fastify REST service for session ingest, policy evaluation, and proofs.</p>
-          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
-            docker pull moinonin/verified-attention-api:latest
-          </div>
+      <div class="card" style="padding: 1.5rem; background: rgba(15, 23, 42, 0.65); border: 1px solid var(--border);">
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1rem;">
+          Build and run the entire Verified Attention service cluster (Portal, Ingestion API, Verifier, Settlement, ML Serving, Python Backend, Postgres, Redis, and Jaeger) directly from the open source repository:
+        </p>
+        <div style="background:#090d16; padding:1rem; border-radius:6px; font-family:monospace; font-size:0.85rem; color:#93c5fd; overflow-x:auto; line-height:1.6;">
+          git clone https://github.com/moinonin/vap-community.git<br>
+          cd vap-community<br>
+          docker compose up -d --build
         </div>
-
-        <div class="card" style="padding: 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <h4 style="color:#fff; margin:0;">ML Serving &amp; Drift</h4>
-            <span class="status-tag active">latest</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Attention scoring engine with TFJS inference and PSI drift detection.</p>
-          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
-            docker pull moinonin/verified-attention-ml-serving:latest
-          </div>
-        </div>
-
-        <div class="card" style="padding: 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <h4 style="color:#fff; margin:0;">Python Backend</h4>
-            <span class="status-tag active">latest</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Python 3.11 high-throughput observation ingestion service.</p>
-          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
-            docker pull moinonin/verified-attention-python-backend:latest
-          </div>
-        </div>
-
-        <div class="card" style="padding: 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <h4 style="color:#fff; margin:0;">Verifier Worker</h4>
-            <span class="status-tag active">latest</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Background replay queue and cryptographic proof issuance daemon.</p>
-          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
-            docker pull moinonin/verified-attention-verifier:latest
-          </div>
-        </div>
-
-        <div class="card" style="padding: 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <h4 style="color:#fff; margin:0;">Settlement Worker</h4>
-            <span class="status-tag active">latest</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Publisher reward clearing, micropayments, and audit reconciliation.</p>
-          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
-            docker pull moinonin/verified-attention-settlement-worker:latest
-          </div>
-        </div>
-
-        <div class="card" style="padding: 1.25rem;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
-            <h4 style="color:#fff; margin:0;">Protocol Portal</h4>
-            <span class="status-tag active">latest</span>
-          </div>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">Interactive protocol explorer, client simulator, and documentation UI.</p>
-          <div style="background:#090d16; padding:0.5rem; border-radius:4px; font-family:monospace; font-size:0.75rem; color:#93c5fd; overflow-x:auto;">
-            docker pull moinonin/verified-attention-portal:latest
-          </div>
+        <div style="margin-top:1rem; display:flex; gap:0.75rem; flex-wrap:wrap; font-size:0.85rem; color:var(--text-muted);">
+          <span>&bull; Portal UI: <code>http://localhost:4000</code></span>
+          <span>&bull; Ingestion API: <code>http://localhost:3000</code></span>
+          <span>&bull; ML Serving: <code>http://localhost:8085</code></span>
+          <span>&bull; Python Backend: <code>http://localhost:8002</code></span>
         </div>
       </div>
     </div>
@@ -247,8 +196,8 @@
           <h4 style="color:#fff;">Browser SDK</h4>
           <p style="font-size:0.85rem; color:var(--text-muted);">Passive DOM interaction observer, offline-tolerant queue, and cryptographic attestation client.</p>
           <div style="margin-top:1rem; display:flex; gap:0.5rem;">
-            <a href="https://github.com/moinonin/verified-attention/tree/main/packages/sdk/browser" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
-            <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
+            <a href="https://github.com/moinonin/vap-community/tree/main/packages/sdk/browser" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
+            <a href="https://github.com/moinonin/vap-community/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
           </div>
         </div>
 
@@ -256,8 +205,8 @@
           <h4 style="color:#fff;">Publisher Chrome Extension</h4>
           <p style="font-size:0.85rem; color:var(--text-muted);">Manifest V3 reference implementation for verified reading and viewer attestation across domains.</p>
           <div style="margin-top:1rem; display:flex; gap:0.5rem;">
-            <a href="https://github.com/moinonin/verified-attention/tree/main/packages/sdk/extension" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
-            <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
+            <a href="https://github.com/moinonin/vap-community/tree/main/packages/sdk/extension" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
+            <a href="https://github.com/moinonin/vap-community/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
           </div>
         </div>
 
@@ -265,8 +214,8 @@
           <h4 style="color:#fff;">Developer CLI (<code>vap</code>)</h4>
           <p style="font-size:0.85rem; color:var(--text-muted);">Full-featured CLI tool for managing sessions, ingesting evidence batches, and auditing proofs.</p>
           <div style="margin-top:1rem; display:flex; gap:0.5rem;">
-            <a href="https://github.com/moinonin/verified-attention/tree/main/packages/cli" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
-            <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
+            <a href="https://github.com/moinonin/vap-community/tree/main/packages/cli" target="_blank" class="btn btn-outline" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Source Code</a>
+            <a href="https://github.com/moinonin/vap-community/archive/refs/heads/main.zip" class="btn btn-primary" style="font-size:0.8rem; padding:0.3rem 0.6rem;">Download ZIP</a>
           </div>
         </div>
       </div>
@@ -281,10 +230,10 @@
         <a href="/whitepaper.pdf" target="_blank" class="btn btn-primary">
           📥 Download Specification Whitepaper (PDF)
         </a>
-        <a href="https://raw.githubusercontent.com/moinonin/verified-attention/main/docker-compose.yml" target="_blank" class="btn btn-outline">
+        <a href="https://raw.githubusercontent.com/moinonin/vap-community/main/docker-compose.yml" target="_blank" class="btn btn-outline">
           ⚙️ Download docker-compose.yml
         </a>
-        <a href="https://github.com/moinonin/verified-attention/archive/refs/heads/main.zip" class="btn btn-outline">
+        <a href="https://github.com/moinonin/vap-community/archive/refs/heads/main.zip" class="btn btn-outline">
           📦 Download Complete Repository (.zip)
         </a>
       </div>
@@ -362,12 +311,12 @@
   <section class="section" id="console-section" style="border-top: 1px solid var(--border); padding-top: 4rem;">
     <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 2rem;">
       <div>
-        <span class="logo-badge" style="background:rgba(16,185,129,0.15); color:var(--success); border-color:var(--success); margin-bottom:0.5rem; display:inline-block;">Verified Attention Protocol</span>
+        <span class="logo-badge" style="background:rgba(16,185,129,0.15); color:var(--success); border-color:var(--success); margin-bottom:0.5rem; display:inline-block;">Karakana VaaS Enterprise</span>
         <h2 style="font-size: 2.2rem; font-weight: 800; color: #fff;">Customer Console &amp; Developer Hub</h2>
         <p style="color:var(--text-muted); font-size:1rem; margin-top:0.25rem;">Manage API keys, configure custom verification policies, audit signed proofs, and monitor settlement clearing.</p>
       </div>
       <div>
-        <span class="status-tag active">Organization: Community Demo</span>
+        <span class="status-tag active">Organization: Karakana Global</span>
       </div>
     </div>
 
@@ -666,7 +615,7 @@
 
         <div id="auth-org-group" class="form-group" style="display:none;">
           <label class="form-label">Organization Name</label>
-          <input type="text" id="auth-org-input" class="form-control" placeholder="Acme Digital Media" value="Community Org">
+          <input type="text" id="auth-org-input" class="form-control" placeholder="Acme Digital Media" value="Karakana Labs">
         </div>
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:1.5rem;">
@@ -686,7 +635,7 @@
     <p>&copy; 2026 Karakana Labs. Open source under Apache-2.0 &amp; CC0.</p>
     <p style="margin-top: 0.5rem;">
       <a href="/whitepaper.pdf" target="_blank">Whitepaper</a> &bull;
-      <a href="https://github.com/moinonin/verified-attention" target="_blank">GitHub</a> &bull;
+      <a href="https://github.com/moinonin/vap-community" target="_blank">GitHub</a> &bull;
       <a href="#downloads">Open Source Downloads</a> &bull;
       <a href="/api/v1/policies">Policies API</a>
     </p>

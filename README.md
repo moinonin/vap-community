@@ -211,77 +211,36 @@ make stop-cluster
 
 ---
 
-### Building & Pushing the 6 Service Container Images
+### Building the 6 Community Service Containers
 
-The codebase builds 6 dedicated container images covering all application services, background workers, and web interfaces:
+The community repository provides source build contexts for 6 services and background workers:
 
-| Container / Service | Context & Dockerfile | Base Image | Role / Entrypoint |
+| Service / Container | Context & Dockerfile | Base Image | Role / Entrypoint |
 | :--- | :--- | :--- | :--- |
-| **`portal`** | `apps/portal/Dockerfile` | `node:22-alpine` | Protocol portal, interactive explorer & console (port `4000`) |
+| **`portal`** | `apps/portal/Dockerfile` | `node:22-alpine` | Web landing, live explorer & community console (port `4000`) |
 | **`api`** | `apps/api/Dockerfile` | `node:22-alpine` | REST API, session ingestion, policies, proofs (port `3000`) |
-| **`ml-serving`** | `apps/ml-serving/Dockerfile` | `node:22-slim` | Attention scoring, TFJS inference & drift monitoring (port `8085`) |
-| **`python-backend`** | `scripts/Dockerfile` | `python:3.11-slim` | High-throughput ingestion & analytics server (port `8002`) |
+| **`ml-serving`** | `apps/ml-serving/Dockerfile` | `node:22-slim` | Baseline TFJS attention calibration & drift monitoring (port `8085`) |
+| **`python-backend`** | `scripts/Dockerfile` | `python:3.11-slim` | High-throughput observation ingestion server (port `8002`) |
 | **`verifier`** | `apps/verifier/Dockerfile` | `node:22-alpine` | Verification engine daemon, proof generation & review worker |
 | **`settlement-worker`** | `packages/reward/settlement/Dockerfile` | `node:22-alpine` | Settlement queue daemon & reward reconciliation worker |
 
-#### Step-by-Step Build Instructions
+#### Step-by-Step Local Build
 
-1. **Prerequisite: Local Monorepo Build Cache**
-   Because TypeScript/pnpm workspace dependencies cross-reference packages across the monorepo, build workspace packages locally first:
+1. **Install Dependencies & Prime Monorepo Cache**
    ```bash
+   pnpm install
    pnpm build
    ```
 
-2. **Build All 6 Images via Docker Compose**
+2. **Build and Run All Services via Docker Compose**
+   ```bash
+   docker compose up -d --build
+   ```
+
+   *Or build any individual service container directly:*
    ```bash
    docker compose build portal api ml-serving python-backend verifier settlement-worker
    ```
-   *Or build any individual service container manually:*
-   ```bash
-   # Portal
-   docker build -t verified-attention-portal -f apps/portal/Dockerfile .
-
-   # REST API
-   docker build -t verified-attention-api -f apps/api/Dockerfile .
-
-   # ML Serving
-   docker build -t verified-attention-ml-serving -f apps/ml-serving/Dockerfile .
-
-   # Python Backend
-   docker build -t verified-attention-python-backend -f scripts/Dockerfile .
-
-   # Verifier Worker
-   docker build -t verified-attention-verifier -f apps/verifier/Dockerfile .
-
-   # Settlement Worker
-   docker build -t verified-attention-settlement-worker -f packages/reward/settlement/Dockerfile .
-   ```
-
-3. **Tag for Target Container Registry (e.g., Docker Hub)**
-   ```bash
-   REGISTRY="moinonin"
-
-   docker tag verified-attention-portal:latest ${REGISTRY}/verified-attention-portal:latest
-   docker tag verified-attention-api:latest ${REGISTRY}/verified-attention-api:latest
-   docker tag verified-attention-ml-serving:latest ${REGISTRY}/verified-attention-ml-serving:latest
-   docker tag verified-attention-python-backend:latest ${REGISTRY}/verified-attention-python-backend:latest
-   docker tag verified-attention-verifier:latest ${REGISTRY}/verified-attention-verifier:latest
-   docker tag verified-attention-settlement-worker:latest ${REGISTRY}/verified-attention-settlement-worker:latest
-   ```
-
-4. **Authenticate and Push Images**
-   ```bash
-   docker login
-
-   docker push ${REGISTRY}/verified-attention-portal:latest
-   docker push ${REGISTRY}/verified-attention-api:latest
-   docker push ${REGISTRY}/verified-attention-ml-serving:latest
-   docker push ${REGISTRY}/verified-attention-python-backend:latest
-   docker push ${REGISTRY}/verified-attention-verifier:latest
-   docker push ${REGISTRY}/verified-attention-settlement-worker:latest
-   ```
-
----
 
 #### 4. Attention ML Serving (`apps/ml-serving`)
 Serves attention scoring and drift detection over HTTP:
