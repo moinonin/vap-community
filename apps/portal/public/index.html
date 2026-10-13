@@ -28,7 +28,6 @@
         <ul>
           <li><a href="#how-it-works">How It Works</a></li>
           <li><a href="#interactive-demo">Live Explorer</a></li>
-          <li><a href="#downloads">Open Source Downloads</a></li>
           <li><a href="#use-cases">Use Cases</a></li>
           <li><a href="#pricing-section">Pricing</a></li>
           <li id="auth-nav-container">
@@ -49,6 +48,7 @@
     </p>
     <div class="hero-actions">
       <a href="#interactive-demo" class="btn btn-primary">Try Interactive Explorer</a>
+      <a href="#downloads" class="btn btn-outline">Open Source Downloads</a>
       <a href="/whitepaper.pdf" target="_blank" class="btn btn-outline">Read Specification Whitepaper &rarr;</a>
     </div>
   </section>
@@ -288,21 +288,17 @@
         </ul>
         <button class="btn btn-primary" onclick="openConsoleGate()">Start 14-Day Trial</button>
       </div>
+    </div>
 
-      <!-- Tier 4: Enterprise / Scale -->
-      <div class="pricing-card">
-        <h3 style="color:#fff;">Scale / Enterprise</h3>
-        <p style="color:var(--text-muted); font-size:0.85rem;">For banks, pharma, &amp; media networks</p>
-        <div class="price-tag">Custom</div>
-        <ul class="pricing-features">
-          <li>5M+ verified sessions / mo</li>
-          <li>Dedicated cloud verifier cluster</li>
-          <li>FIPS 140-2 Level 3 HSM keys</li>
-          <li>Custom domain signing (DNS / DID)</li>
-          <li>Dedicated solutions engineer</li>
-        </ul>
-        <button class="btn btn-outline" onclick="openConsoleGate()">Contact Sales</button>
+    <!-- Enterprise & Custom Scale Callout -->
+    <div style="margin-top: 2rem; padding: 1.25rem 1.75rem; background: rgba(15, 23, 42, 0.4); border: 1px dashed var(--border); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h4 style="color: #fff; font-size: 1rem; margin-bottom: 0.25rem;">Need Scale or Custom Enterprise Deployment?</h4>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">
+          5M+ sessions/mo &bull; Dedicated cloud verifier clusters &bull; FIPS 140-2 Level 3 HSM keys &bull; Custom DID/DNS domain signing &bull; 99.99% uptime SLA.
+        </p>
       </div>
+      <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.45rem 1rem;" onclick="openConsoleGate()">Contact Enterprise Sales &rarr;</button>
     </div>
   </section>
 
