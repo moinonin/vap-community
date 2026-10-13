@@ -71,6 +71,15 @@ function setupObservers() {
     }
   }, { passive: true });
 
+  // Touch listener for mobile screen interactions
+  readingArea.addEventListener('touchmove', () => {
+    if (!activeSessionId) return;
+    scrollEvents++;
+    if (scrollEvents % 5 === 0) {
+      log(`Captured observation: E-INTERACTION (mobile_touch_swipe #${scrollEvents})`, 'info');
+    }
+  }, { passive: true });
+
   readingArea.addEventListener('click', () => {
     if (!activeSessionId) return;
     clickEvents++;
@@ -385,4 +394,20 @@ function exportProofAuditCSV() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+// 6. Mobile Navigation Drawer Controls
+function toggleMobileNav() {
+  const nav = document.getElementById('main-nav');
+  const btn = document.getElementById('mobile-nav-btn');
+  if (!nav) return;
+  const isOpen = nav.classList.toggle('mobile-open');
+  if (btn) btn.classList.toggle('active', isOpen);
+}
+
+function closeMobileNav() {
+  const nav = document.getElementById('main-nav');
+  const btn = document.getElementById('mobile-nav-btn');
+  if (nav) nav.classList.remove('mobile-open');
+  if (btn) btn.classList.remove('active');
 }

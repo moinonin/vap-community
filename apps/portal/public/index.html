@@ -24,15 +24,22 @@
         <span>Verified Attention</span>
         <span class="logo-badge">VAP 1.0</span>
       </div>
-      <nav>
+
+      <button class="mobile-nav-toggle" id="mobile-nav-btn" aria-label="Toggle Navigation" onclick="toggleMobileNav()">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+
+      <nav id="main-nav">
         <ul>
-          <li><a href="#how-it-works">How It Works</a></li>
-          <li><a href="#interactive-demo">Live Explorer</a></li>
-          <li><a href="#use-cases">Use Cases</a></li>
-          <li><a href="#pricing-section">Pricing</a></li>
+          <li><a href="#how-it-works" onclick="closeMobileNav()">How It Works</a></li>
+          <li><a href="#interactive-demo" onclick="closeMobileNav()">Live Explorer</a></li>
+          <li><a href="#use-cases" onclick="closeMobileNav()">Use Cases</a></li>
+          <li><a href="#pricing-section" onclick="closeMobileNav()">Pricing</a></li>
           <li id="auth-nav-container">
-            <button id="btn-login-trigger" class="btn btn-primary" style="padding: 0.4rem 0.9rem;" onclick="openAuthModal('login')">Sign In</button>
-            <a id="nav-console-btn" href="#console-section" class="btn btn-primary" style="display:none; padding: 0.4rem 0.9rem;">Customer Console &rarr;</a>
+            <button id="btn-login-trigger" class="btn btn-primary" style="padding: 0.4rem 0.9rem;" onclick="openAuthModal('login'); closeMobileNav();">Sign In</button>
+            <a id="nav-console-btn" href="#console-section" class="btn btn-primary" style="display:none; padding: 0.4rem 0.9rem;" onclick="closeMobileNav()">Customer Console &rarr;</a>
           </li>
         </ul>
       </nav>

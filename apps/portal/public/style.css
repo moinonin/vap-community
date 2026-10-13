@@ -72,6 +72,37 @@ header {
   border: 1px solid var(--accent);
 }
 
+.mobile-nav-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background-color: var(--text-main);
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.mobile-nav-toggle.active .hamburger-bar:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.mobile-nav-toggle.active .hamburger-bar:nth-child(2) {
+  opacity: 0;
+}
+.mobile-nav-toggle.active .hamburger-bar:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
 nav ul {
   display: flex;
   gap: 1.5rem;
@@ -100,6 +131,8 @@ nav a:hover {
   cursor: pointer;
   transition: all 0.2s;
   border: none;
+  text-align: center;
+  justify-content: center;
 }
 
 .btn-primary {
@@ -131,7 +164,7 @@ nav a:hover {
 }
 
 .hero h1 {
-  font-size: 3.2rem;
+  font-size: clamp(2.1rem, 5.5vw, 3.2rem);
   line-height: 1.15;
   margin-bottom: 1.2rem;
   font-weight: 800;
@@ -142,7 +175,7 @@ nav a:hover {
 }
 
 .hero p {
-  font-size: 1.25rem;
+  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
   color: var(--text-muted);
   max-width: 780px;
   margin: 0 auto 2.5rem;
@@ -152,6 +185,7 @@ nav a:hover {
   display: flex;
   justify-content: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 /* Grid & Cards */
@@ -695,6 +729,7 @@ nav a:hover {
   overflow-y: auto;
 }
 
+/* Responsive & Mobile Optimizations */
 @media (max-width: 900px) {
   .console-app-container {
     flex-direction: column;
@@ -703,9 +738,138 @@ nav a:hover {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    padding: 1rem;
+  }
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebar-link {
+    width: auto;
+    white-space: nowrap;
+    padding: 0.5rem 0.85rem;
+    flex-shrink: 0;
   }
   .console-main-content {
-    padding: 1.5rem;
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-nav-toggle {
+    display: flex;
+  }
+
+  nav#main-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(10, 14, 23, 0.98);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+  }
+
+  nav#main-nav.mobile-open {
+    display: block;
+  }
+
+  nav#main-nav ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    width: 100%;
+  }
+
+  nav#main-nav li {
+    width: 100%;
+  }
+
+  nav#main-nav a, nav#main-nav button {
+    display: block;
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  #auth-nav-container {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .hero {
+    margin: 2.5rem auto 1.5rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .section {
+    margin: 3.5rem auto;
+    padding: 0 1rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+
+  .section-desc {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+
+  .simulator-side {
+    padding: 1.25rem;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .simulator-side > div:last-child {
+    flex-direction: column;
+  }
+
+  .simulator-side > div:last-child .btn {
+    width: 100%;
+  }
+
+  .terminal-side {
+    padding: 1rem;
+  }
+
+  .modal-card {
+    padding: 1.5rem 1.25rem;
+    width: 95%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-group span:first-of-type {
+    font-size: 1.05rem;
+  }
+
+  .logo-badge {
+    display: none;
+  }
+
+  .pricing-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .price-tag {
+    font-size: 2rem;
+  }
+
+  .metric-stat {
+    font-size: 1.75rem;
   }
 }
 
