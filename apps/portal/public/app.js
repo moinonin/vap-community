@@ -200,10 +200,12 @@ function checkAuthSession() {
           })
           .catch(() => { /* API offline / demo mode: keep local session */ });
       }
+      return;
     } catch {
       localStorage.removeItem('vap_user_session');
     }
   }
+  applyLoggedOutState();
 }
 
 function applyAuthenticatedState(user) {
@@ -224,8 +226,10 @@ function applyAuthenticatedState(user) {
   // 3. Unlock console overlay & unblur
   const overlay = document.getElementById('console-gate-overlay');
   const inner = document.getElementById('console-inner-body');
+  const header = document.getElementById('console-section-header');
   if (overlay) overlay.style.display = 'none';
   if (inner) inner.classList.remove('gate-blur');
+  if (header) header.style.display = 'flex';
 }
 
 function applyLoggedOutState() {
@@ -242,8 +246,10 @@ function applyLoggedOutState() {
   // 3. Restore gating overlay & blur
   const overlay = document.getElementById('console-gate-overlay');
   const inner = document.getElementById('console-inner-body');
+  const header = document.getElementById('console-section-header');
   if (overlay) overlay.style.display = 'block';
   if (inner) inner.classList.add('gate-blur');
+  if (header) header.style.display = 'none';
 }
 
 function openAuthModal(mode = 'login') {
