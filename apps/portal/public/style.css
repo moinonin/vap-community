@@ -627,6 +627,8 @@ nav a:hover {
   content: "✓";
   color: var(--success);
   font-weight: bold;
+}
+
 /* Console Section & Gate Overlay */
 .console-section-header {
   display: flex;
