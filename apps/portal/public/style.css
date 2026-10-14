@@ -658,12 +658,16 @@ nav a:hover {
   border: 1px solid var(--accent);
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
   border-radius: 12px;
-  padding: 1.75rem 1.5rem;
+  padding: 2.25rem 2rem;
   text-align: center;
-  max-width: 400px;
-  width: min(90%, 400px);
+  max-width: 440px;
+  width: min(90%, 440px);
   z-index: 50;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Full Console Workspace Layout (Sidebar Mode) */
@@ -978,4 +982,14 @@ footer {
   text-align: center;
   color: var(--text-muted);
   font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+footer p {
+  text-align: center;
+  margin: 0.25rem 0;
+  width: 100%;
 }

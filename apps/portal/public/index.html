@@ -158,11 +158,11 @@
   <section class="section" id="downloads" style="border-top: 1px solid var(--border); padding-top: 4rem;">
     <div style="text-align: center; max-width: 860px; margin: 0 auto 3rem;">
       <h2 class="section-title">Open Source Downloads &amp; Packages</h2>
-      <div style="margin: 0.5rem 0 0.85rem;">
+      <div style="margin: 0.5rem 0 0.85rem; display: flex; justify-content: center; align-items: center;">
         <span class="logo-badge" style="background:rgba(59,130,246,0.15); color:var(--accent); border-color:var(--accent); display:inline-block;">Open Source Ecosystem (Apache-2.0 &amp; CC0)</span>
       </div>
       <p class="section-desc" style="margin-bottom: 1.25rem;">Free, unmetered, ungated access to all protocol specifications, production container images, SDKs, and reference engines.</p>
-      <div>
+      <div style="display: flex; justify-content: center;">
         <a href="https://github.com/moinonin/vap-community" target="_blank" class="btn btn-outline" style="font-size:0.85rem; padding:0.4rem 0.9rem;">
           ⭐ View GitHub Monorepo &rarr;
         </a>
@@ -327,14 +327,14 @@
       <div id="console-gate-overlay" class="gate-card-overlay">
         <div style="font-size:2.2rem; margin-bottom:0.5rem;">🔒</div>
         <h3 style="color:#fff; font-size:1.25rem; margin-bottom:0.4rem;">Enterprise Console Gated</h3>
-        <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1.25rem; line-height:1.5;">
+        <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1.25rem; line-height:1.5; max-width:320px; margin-left:auto; margin-right:auto;">
           Access to production API keys, policy deployment, and billing ledgers requires enterprise organization credentials or developer sandbox access.
         </p>
-        <div style="display:flex; flex-direction:column; gap:0.6rem; max-width:320px; margin:0 auto;">
-          <button class="btn btn-primary" onclick="openAuthModal('signup')" style="justify-content:center; padding:0.5rem 1rem; font-size:0.85rem;">
+        <div style="display:flex; flex-direction:column; gap:0.6rem; max-width:280px; width:100%; margin:0 auto;">
+          <button class="btn btn-primary" onclick="openAuthModal('signup')" style="width:100%; justify-content:center; padding:0.55rem 1rem; font-size:0.85rem;">
             ⚡ Create Free Sandbox Account
           </button>
-          <button class="btn btn-outline" onclick="openAuthModal('login')" style="justify-content:center; padding:0.5rem 1rem; font-size:0.85rem;">
+          <button class="btn btn-outline" onclick="openAuthModal('login')" style="width:100%; justify-content:center; padding:0.55rem 1rem; font-size:0.85rem;">
             Sign In with Existing Account
           </button>
         </div>
@@ -374,7 +374,7 @@
               </button>
             </nav>
 
-            <div class="sidebar-footer">
+            <div id="sidebar-footer-container" class="sidebar-footer" style="display:none;">
               <div style="margin-bottom:0.75rem;">
                 <div style="font-size:0.75rem; color:var(--text-muted);">Signed in as:</div>
                 <div id="sidebar-user-email" style="font-size:0.85rem; color:#fff; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">developer@karakana.io</div>
@@ -615,6 +615,8 @@
           <input type="password" id="auth-password-input" class="form-control" placeholder="••••••••••••" required value="demo-password">
         </div>
 
+        <div id="auth-error" class="form-group" style="display:none; color:#ef4444; font-size:0.85rem; margin-bottom:0.75rem;"></div>
+
         <div id="auth-org-group" class="form-group" style="display:none;">
           <label class="form-label">Organization Name</label>
           <input type="text" id="auth-org-input" class="form-control" placeholder="Acme Digital Media" value="Karakana Labs">
@@ -634,8 +636,8 @@
 
   <!-- Footer -->
   <footer>
-    <p>&copy; 2026 Karakana Labs. Open source under Apache-2.0 &amp; CC0.</p>
-    <p style="margin-top: 0.5rem;">
+    <p style="text-align: center; margin: 0 auto;">&copy; 2026 Karakana Labs. Open source under Apache-2.0 &amp; CC0.</p>
+    <p style="margin-top: 0.5rem; text-align: center; margin-left: auto; margin-right: auto;">
       <a href="/whitepaper.pdf" target="_blank">Whitepaper</a> &bull;
       <a href="https://github.com/moinonin/vap-community" target="_blank">GitHub</a> &bull;
       <a href="#downloads">Open Source Downloads</a> &bull;

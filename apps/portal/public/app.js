@@ -188,6 +188,18 @@ function checkAuthSession() {
     try {
       currentUser = JSON.parse(saved);
       applyAuthenticatedState(currentUser);
+      // Validate the token against the backend; drop the session on 401
+      if (currentUser.token) {
+        fetch('/api/v1/auth/me', { headers: { 'Authorization': 'Bearer ' + currentUser.token } })
+          .then((res) => {
+            if (res.status === 401) {
+              localStorage.removeItem('vap_user_session');
+              currentUser = null;
+              applyLoggedOutState();
+            }
+          })
+          .catch(() => { /* API offline / demo mode: keep local session */ });
+      }
     } catch {
       localStorage.removeItem('vap_user_session');
     }
@@ -201,11 +213,13 @@ function applyAuthenticatedState(user) {
   if (btnTrigger) btnTrigger.style.display = 'none';
   if (navConsoleBtn) navConsoleBtn.style.display = 'inline-flex';
 
-  // 2. Update sidebar user and org display
+  // 2. Update sidebar user and org display & unhide sidebar footer (with sign out)
   const sidebarOrg = document.getElementById('sidebar-org-name');
   const sidebarEmail = document.getElementById('sidebar-user-email');
+  const sidebarFooter = document.getElementById('sidebar-footer-container');
   if (sidebarOrg && user.org) sidebarOrg.textContent = user.org;
   if (sidebarEmail && user.email) sidebarEmail.textContent = user.email;
+  if (sidebarFooter) sidebarFooter.style.display = 'block';
 
   // 3. Unlock console overlay & unblur
   const overlay = document.getElementById('console-gate-overlay');
@@ -221,7 +235,11 @@ function applyLoggedOutState() {
   if (btnTrigger) btnTrigger.style.display = 'inline-block';
   if (navConsoleBtn) navConsoleBtn.style.display = 'none';
 
-  // 2. Restore gating overlay & blur
+  // 2. Hide sidebar footer (ensuring Sign Out is not shown)
+  const sidebarFooter = document.getElementById('sidebar-footer-container');
+  if (sidebarFooter) sidebarFooter.style.display = 'none';
+
+  // 3. Restore gating overlay & blur
   const overlay = document.getElementById('console-gate-overlay');
   const inner = document.getElementById('console-inner-body');
   if (overlay) overlay.style.display = 'flex';
@@ -262,28 +280,55 @@ function updateAuthModalUI() {
   }
 }
 
-function handleAuthSubmit(event) {
+async function handleAuthSubmit(event) {
   event.preventDefault();
   const email = document.getElementById('auth-email-input').value.trim();
+  const password = document.getElementById('auth-password-input').value;
   const org = document.getElementById('auth-org-input').value.trim() || 'Karakana Global';
+  const errorEl = document.getElementById('auth-error');
+  const submitBtn = document.getElementById('auth-submit-btn');
 
-  const user = {
-    email,
-    org,
-    role: 'DEVELOPER',
-    token: 'jwt_mock_vae_' + Math.random().toString(36).substring(2)
-  };
+  if (errorEl) { errorEl.style.display = 'none'; errorEl.textContent = ''; }
+  submitBtn.disabled = true;
 
-  localStorage.setItem('vap_user_session', JSON.stringify(user));
-  currentUser = user;
-  applyAuthenticatedState(user);
-  closeAuthModal();
+  const endpoint = authMode === 'signup' ? '/api/v1/auth/register' : '/api/v1/auth/login';
+  const payload = authMode === 'signup' ? { email, password, org } : { email, password };
 
-  log(`Authenticated as ${email} (${org}). Customer Console unlocked.`, 'success');
+  try {
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
 
-  // Smooth scroll to console
-  const consoleSection = document.getElementById('console-section');
-  if (consoleSection) consoleSection.scrollIntoView({ behavior: 'smooth' });
+    if (!res.ok) {
+      const message = (data && data.error && data.error.message) || `Authentication failed (HTTP ${res.status})`;
+      if (errorEl) { errorEl.textContent = message; errorEl.style.display = 'block'; }
+      submitBtn.disabled = false;
+      return;
+    }
+
+    // Backend returns { user: { id, email, org, role }, token }
+    const user = data.user
+      ? { email: data.user.email, org: data.user.org || org, role: data.user.role || 'DEVELOPER', token: data.token }
+      : { email, org, role: 'DEVELOPER', token: data.token };
+
+    localStorage.setItem('vap_user_session', JSON.stringify(user));
+    currentUser = user;
+    applyAuthenticatedState(user);
+    closeAuthModal();
+
+    log(`Authenticated as ${user.email} (${user.org}). Customer Console unlocked.`, 'success');
+
+    const consoleSection = document.getElementById('console-section');
+    if (consoleSection) consoleSection.scrollIntoView({ behavior: 'smooth' });
+  } catch (err) {
+    if (errorEl) { errorEl.textContent = 'Could not reach the auth service. Is the API running?'; errorEl.style.display = 'block'; }
+    log('Auth request failed: ' + (err && err.message ? err.message : 'network error'), 'error');
+  } finally {
+    submitBtn.disabled = false;
+  }
 }
 
 function handleLogout() {
