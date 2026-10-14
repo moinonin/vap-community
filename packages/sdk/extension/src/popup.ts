@@ -118,7 +118,7 @@ declare const chrome: unknown;
 
 if (inChromeExtension() && typeof document !== 'undefined') {
   const controller = initPopup({
-    dom: { byId: (id) => document.getElementById(id) },
+    dom: { byId: <T = unknown>(id: string) => document.getElementById(id) as T | null },
     runtime: createChromeRuntime(),
   });
   controller.startStatusPolling(2_000);

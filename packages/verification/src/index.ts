@@ -120,3 +120,11 @@ export {
   verifyProofHash,
   verifyProof,
 } from './verify.js';
+
+// Sprint 16: Omni-Channel Social & Brand Space Verification
+export {
+  SocialAttentionPolicy,
+  type SocialEvidenceInput,
+  type SocialVerificationResult,
+  type Archetype,
+} from './policies/social.js';

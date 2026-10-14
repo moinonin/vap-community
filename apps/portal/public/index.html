@@ -370,7 +370,11 @@
               <button class="sidebar-link" onclick="switchConsoleTab('tab-billing', this)">
                 <span>💳</span> Billing &amp; Settlement
               </button>
+              <button class="sidebar-link" onclick="switchConsoleTab('tab-social', this)">
+                <span>🌐</span> External &amp; Social Proofs
+              </button>
             </nav>
+
 
             <div id="sidebar-footer-container" class="sidebar-footer" style="display:none;">
               <div style="margin-bottom:0.75rem;">
@@ -564,7 +568,73 @@
             </div>
           </div>
         </div>
+
+        <!-- TAB: EXTERNAL & SOCIAL PROOFS (Sprint 16, Unit 7) -->
+        <div id="tab-social" class="tab-content">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <div>
+              <h3 style="color:#fff; margin-bottom:0.25rem;">Omni-Channel Social &amp; External Brand Space Verification</h3>
+              <p style="color:var(--text-muted); font-size:0.875rem; margin:0;">
+                Cryptographically audited attention across LinkedIn, YouTube, Substack, X, and dark social touchpoints.
+              </p>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-primary" onclick="renderSocialProofs('all')">🔄 Refresh Feeds</button>
+              <button class="btn btn-outline" onclick="exportSocialProofsCSV()">📥 Export Proofs (CSV)</button>
+            </div>
+          </div>
+
+          <div class="metrics-grid" style="margin-bottom:2rem;">
+            <div class="card">
+              <div class="metric-sub">LinkedIn Verified Read Rate</div>
+              <div class="metric-stat" style="color:var(--success); font-size:1.8rem;">88.4%</div>
+              <div class="metric-sub">Dwell &ge; 45s, velocity &le; 450 WPM</div>
+            </div>
+            <div class="card">
+              <div class="metric-sub">YouTube Active Focus Watch Time</div>
+              <div class="metric-stat" style="color:#60a5fa; font-size:1.8rem;">94.1%</div>
+              <div class="metric-sub">Zero-credit background tab filtering</div>
+            </div>
+            <div class="card">
+              <div class="metric-sub">Dark Social Conversions</div>
+              <div class="metric-stat" style="color:var(--accent); font-size:1.8rem;">1,420</div>
+              <div class="metric-sub">100% ZK-attributed without cookies</div>
+            </div>
+            <div class="card">
+              <div class="metric-sub">Substack / Medium Completion</div>
+              <div class="metric-stat" style="color:#f59e0b; font-size:1.8rem;">72.6%</div>
+              <div class="metric-sub">Average scroll depth: 84%</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; margin-bottom:1rem; flex-wrap:wrap;">
+            <button class="btn btn-outline filter-btn active" onclick="renderSocialProofs('all', this)">All Channels</button>
+            <button class="btn btn-outline filter-btn" onclick="renderSocialProofs('feed', this)">Feed Cards (LinkedIn / X)</button>
+            <button class="btn btn-outline filter-btn" onclick="renderSocialProofs('video', this)">Video (YouTube / TikTok)</button>
+            <button class="btn btn-outline filter-btn" onclick="renderSocialProofs('article', this)">Longform (Substack / Medium)</button>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Channel / Platform</th>
+                  <th>Archetype</th>
+                  <th>Content Asset URI</th>
+                  <th>Dwell / Watch</th>
+                  <th>Confidence</th>
+                  <th>Attribution Status</th>
+                  <th>Proof URN</th>
+                </tr>
+              </thead>
+              <tbody id="social-proofs-tbody">
+                <!-- Dynamically populated by renderSocialProofs() -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </main>
+
     </div>
   </div>
 </div>

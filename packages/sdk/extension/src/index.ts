@@ -188,3 +188,4 @@ export interface ProofOfAttention {
 }
 
 export default VerifiedAttention;
+export * from './adapters';

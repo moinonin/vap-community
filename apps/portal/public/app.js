@@ -462,3 +462,61 @@ function closeMobileNav() {
   if (nav) nav.classList.remove('mobile-open');
   if (btn) btn.classList.remove('active');
 }
+
+// 7. Omni-Channel & Social Proof Explorer (Sprint 16, Unit 7)
+const MOCK_SOCIAL_PROOFS = [
+  { platform: 'LinkedIn', archetype: 'feed', uri: 'urn:li:activity:72518293819238', dwell: '54s', conf: 0.94, attr: 'CONVERTED (/signup)', proofUrn: 'urn:vap:proof:social:linkedin:7f8a3d11' },
+  { platform: 'YouTube', archetype: 'video', uri: 'urn:vap:content:youtube:video:dQw4w9WgXcQ', dwell: '3m 22s', conf: 0.96, attr: 'IN-PROGRESS', proofUrn: 'urn:vap:proof:social:youtube:10da5578' },
+  { platform: 'Substack', archetype: 'article', uri: 'urn:vap:content:article:engineering.substack.com:p/architecture', dwell: '4m 12s', conf: 0.91, attr: 'CONVERTED (/pricing)', proofUrn: 'urn:vap:proof:social:longform:ee48a109' },
+  { platform: 'X.com', archetype: 'feed', uri: 'urn:vap:content:x:status:1842918274928172', dwell: '28s', conf: 0.89, attr: 'ATTRIBUTED', proofUrn: 'urn:vap:proof:social:x:a4c9b210' },
+  { platform: 'TikTok Web', archetype: 'video', uri: 'urn:vap:content:tiktok:video:7281928471928371', dwell: '48s', conf: 0.93, attr: 'VIEW_ONLY', proofUrn: 'urn:vap:proof:social:tiktok:3b19de42' }
+];
+
+function renderSocialProofs(filter = 'all', btnEl = null) {
+  if (btnEl) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+
+  const tbody = document.getElementById('social-proofs-tbody');
+  if (!tbody) return;
+
+  const filtered = filter === 'all' 
+    ? MOCK_SOCIAL_PROOFS 
+    : MOCK_SOCIAL_PROOFS.filter(p => p.archetype === filter);
+
+  tbody.innerHTML = filtered.map(item => `
+    <tr>
+      <td><strong>${item.platform}</strong></td>
+      <td><span class="status-tag active">${item.archetype.toUpperCase()}</span></td>
+      <td><code style="font-size:0.75rem;">${item.uri.length > 35 ? item.uri.slice(0, 35) + '...' : item.uri}</code></td>
+      <td>${item.dwell}</td>
+      <td><strong style="color:var(--success);">${(item.conf * 100).toFixed(0)}%</strong></td>
+      <td><span class="status-tag ${item.attr.includes('CONVERTED') ? 'active' : 'revoked'}" style="${item.attr.includes('CONVERTED') ? 'background:#059669;' : ''}">${item.attr}</span></td>
+      <td><button class="copy-btn" onclick="copySnippet('${item.proofUrn}', this)">📋 Copy</button></td>
+    </tr>
+  `).join('');
+}
+
+function exportSocialProofsCSV() {
+  const rows = [
+    ['platform', 'archetype', 'contentUri', 'dwell', 'confidence', 'attributionStatus', 'proofUrn'],
+    ...MOCK_SOCIAL_PROOFS.map(p => [p.platform, p.archetype, p.uri, p.dwell, p.conf, p.attr, p.proofUrn])
+  ];
+  const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+  const encodedUri = encodeURI(csvContent);
+  const link = document.createElement('a');
+  link.setAttribute('href', encodedUri);
+  link.setAttribute('download', 'vap_omnichannel_social_proofs.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+// Initial populate
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    renderSocialProofs('all');
+  });
+}
+

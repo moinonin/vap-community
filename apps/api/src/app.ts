@@ -9,17 +9,27 @@
 import http, { type IncomingMessage, type ServerResponse } from 'node:http';
 import { matchSessionRoute, type HttpMethod, type RouteRequest } from './sessions/router';
 import { SessionController } from './sessions/controller';
+import { SessionStore } from './sessions/store';
+import { EvidenceController } from './evidence/controller';
+import { POLICIES_PREFIX } from './policies/index';
 import { matchEvidenceRoute } from './evidence/router';
 import { matchProofsRoute } from './proofs/router';
 import { matchPolicyRoute } from './policies/index';
+import { matchAuthRoute } from './auth/router';
 import { matchPrivacyRoute } from './privacy/router';
+import { externalEvidenceRouter } from './evidence/external';
+
+
 
 export interface ApiServer {
   listen(port: number, host?: string): void;
   close(): Promise<void>;
 }
 
-export function createServer(controller: SessionController = new SessionController()): ApiServer {
+export function createServer(sessionStore: SessionStore = new SessionStore()): ApiServer {
+  // Controllers share the session store so evidence ingestion resolves sessions
+  const controller = new SessionController(sessionStore);
+  const evidenceController = new EvidenceController(undefined, sessionStore);
   const server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -55,8 +65,26 @@ export function createServer(controller: SessionController = new SessionControll
 
     const routeReq: RouteRequest = { method, path: url, body };
 
-    // 1. Evidence routes
-    const evidenceRes = await matchEvidenceRoute(routeReq);
+    // 0. Auth routes (Authorization header forwarded for /v1/auth/me)
+    const authRes = await matchAuthRoute({ ...routeReq, headers: { authorization: req.headers.authorization } });
+    if (authRes) {
+      res.statusCode = authRes.status;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(authRes.body));
+      return;
+    }
+
+    // 1. Evidence routes (shared controller/store)
+    const externalRes = await externalEvidenceRouter(routeReq);
+    if (externalRes) {
+      res.statusCode = externalRes.status;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(externalRes.body));
+      return;
+    }
+
+    const evidenceRes = await matchEvidenceRoute(routeReq, evidenceController);
+
     if (evidenceRes) {
       res.statusCode = evidenceRes.status;
       res.setHeader('Content-Type', 'application/json');
@@ -73,9 +101,9 @@ export function createServer(controller: SessionController = new SessionControll
       return;
     }
 
-    // 3. Policies routes
-    const policyRes = matchPolicyRoute(routeReq);
-    if (policyRes) {
+    // 3. Policies routes (matchPolicyRoute 404s non-policy paths instead of returning null)
+    if (url.startsWith(POLICIES_PREFIX)) {
+      const policyRes = matchPolicyRoute(routeReq);
       res.statusCode = policyRes.status;
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(policyRes.body));

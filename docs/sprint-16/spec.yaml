@@ -1,0 +1,72 @@
+task_id: sprint-16-omni-channel-social-verification
+summary: "Omni-Channel Social & Brand Space Addon (3 Universal Archetypes + Declarative Profiles) and Zero-Knowledge Prior Exposure Attribution"
+depends_on: ["sprint-15-privacy-compliance", "sprint-11-proof-generation-production"]
+local_goals:
+  - id: L1
+    description: "CREATE: Platform adapter interface and declarative profile registry (declarative selector maps for LinkedIn, X, YouTube, TikTok, Facebook, Medium, Substack) in packages/sdk/extension/src/adapters/registry.ts and packages/sdk/extension/src/adapters/base.ts"
+    verification:
+      type: file_exists
+      path: "packages/sdk/extension/src/adapters/registry.ts"
+      expect:
+        content_contains: "PLATFORM_PROFILES"
+  - id: L2
+    description: "CREATE: Universal feed card archetype adapter (LinkedIn, X.com/Twitter, Facebook, Threads, Reddit) with reading-velocity check in packages/sdk/extension/src/adapters/feed.ts"
+    verification:
+      type: file_exists
+      path: "packages/sdk/extension/src/adapters/feed.ts"
+      expect:
+        content_contains: "FeedCardAdapter"
+  - id: L3
+    description: "CREATE: Universal HTML5 video player archetype adapter (YouTube, TikTok Web, Instagram Reels, Vimeo) with active tab focus enforcement in packages/sdk/extension/src/adapters/video.ts"
+    verification:
+      type: file_exists
+      path: "packages/sdk/extension/src/adapters/video.ts"
+      expect:
+        content_contains: "VideoPlayerAdapter"
+  - id: L4
+    description: "CREATE: Universal longform article archetype adapter and generic web fallback (Substack, Medium, Ghost, blogs) in packages/sdk/extension/src/adapters/article.ts"
+    verification:
+      type: file_exists
+      path: "packages/sdk/extension/src/adapters/article.ts"
+      expect:
+        content_contains: "ArticleAdapter"
+  - id: L5
+    description: "CREATE: External observation ingestion controller and route (POST /v1/evidence/external) in apps/api/src/evidence/external.ts"
+    verification:
+      type: file_exists
+      path: "apps/api/src/evidence/external.ts"
+      expect:
+        content_contains: "externalEvidenceRouter"
+  - id: L6
+    description: "CREATE: Multi-archetype social verification policy (feed, video, article weights) in packages/verification/src/policies/social.ts"
+    verification:
+      type: file_exists
+      path: "packages/verification/src/policies/social.ts"
+      expect:
+        content_contains: "SocialAttentionPolicy"
+  - id: L7
+    description: "UPDATE: Customer Console social proof metrics and channel filter breakdown in apps/portal/public/index.html & app.js"
+    verification:
+      type: file_exists
+      path: "apps/portal/public/app.js"
+      expect:
+        content_contains: "renderSocialProofs"
+  - id: L8
+    description: "VERIFY: Unit and integration tests for universal archetypes and platform profiles"
+    verification:
+      type: cli
+      command: "pnpm test --filter=@verified-attention/extension-sdk -- adapters"
+      expect:
+        exit_code: 0
+  - id: L9
+    description: "CREATE: Prior attention attribution handshake & local proof query protocol (dark social 'Where did you hear about us' replacement) in packages/sdk/browser/src/attribution/index.ts and packages/sdk/extension/src/attribution.ts"
+    verification:
+      type: file_exists
+      path: "packages/sdk/browser/src/attribution/index.ts"
+      expect:
+        content_contains: "PriorAttentionHandshake"
+global_goals_refs: ["G1", "G3", "G16", "G17"]
+context:
+  language: TypeScript
+  framework: Node.js
+  test_framework: Vitest

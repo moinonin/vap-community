@@ -2,15 +2,15 @@
   "name": "@verified-attention/core",
   "version": "0.1.0-dev",
   "description": "Core VAP types: Evidence, Observation, Session, Claim, Proof",
-  "main": "./dist/index.js",
+  "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.mts"
     },
+
     "./observation": {
       "import": "./dist/observation.mjs",
       "require": "./dist/observation.js",

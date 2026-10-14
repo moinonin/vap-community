@@ -214,3 +214,125 @@ flowchart LR
 | **Execution Environment** | Embedded in the web application or native mobile app | Isolated background service worker in Chromium browsers |
 | **Evidence Routing** | Directly from platform client to publisher's VAE cluster | From extension to configured community or third-party verifier |
 | **Proof Custody** | Publisher platform receives and submits PoA to advertisers | Viewer's browser extension stores PoA in local private vault |
+
+---
+
+## Part 3: Omni-Channel Brand Spaces & The "Where Did You Hear About Us?" Solution
+
+Beyond first-party web apps and generic web browsing, brands conduct the vast majority of their high-value communications inside **third-party walled gardens**:
+- **LinkedIn Posts & Articles** (Executive memos, technical case studies, B2B branding)
+- **YouTube Keynotes & Demos** (Product releases, investor presentations)
+- **Substack & Medium Publications** (Deep-dive technical whitepapers)
+- **X (Twitter) & Threads** (Community town halls, breaking announcements)
+
+### The "Dark Social" Attribution Breakdown
+
+Consider the standard modern buyer journey:
+1. **Monday:** A software architect reads your in-depth engineering breakdown on LinkedIn for 90 seconds. She does **not** click the post's link because she is in the middle of her work feed.
+2. **Thursday:** At her desk, she opens a new tab, types `yourcompany.com/pricing` directly into the address bar, and signs up.
+3. **The Analytics Failure:** Because third-party tracking cookies are deprecated and walled gardens do not pass referral headers on delayed visits, Google Analytics categorizes her as **"Direct / None"**.
+4. **The Crude Hack:** The marketing team is forced to add an unverified checkout drop-down survey: *"Where did you hear about us from?"*
+
+```
+[ LinkedIn Post ] ──(No Click)──▶ [ 3 Days Pass ] ──▶ [ Direct URL Visit: yourcompany.com/signup ]
+                                                                │
+                                                  Analytics Blindspot: "Direct / None"
+                                                                │
+                                                  Forced to ask: "Where did you hear about us?"
+```
+
+### The VAP Solution: Zero-Knowledge Prior Exposure Handshake
+
+VAP replaces self-reported surveys and intrusive tracking pixels with a **Zero-Knowledge Prior Attention Handshake**:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 👤 Viewer / Buyer
+    participant Social as 🌐 LinkedIn / YouTube (Walled Garden)
+    participant Addon as 🛡️ VAP Browser Addon (Local Ring Buffer)
+    participant Gateway as ⚡ VAP Ingestion Gateway (:3000)
+    participant BrandSite as 🏢 Brand Conversion Page (yourcompany.com/signup)
+
+    User->>Social: Reads brand post #9821 for 60s (Human scroll cadence, focused tab)
+    Social->>Addon: Content adapter observes active dwell + micro-entropy
+    Addon->>Gateway: POST /v1/evidence/external (Zero PII payload)
+    Gateway-->>Addon: Returns signed PoA: urn:vap:proof:social:linkedin:9821
+    Note over Addon: Stores anonymous voucher locally in encrypted ring buffer
+
+    Note over User,BrandSite: 3 Days Later: User navigates directly to yourcompany.com/signup
+    User->>BrandSite: Loads registration form
+    BrandSite->>Addon: vap.requestPriorAttentionProofs({ orgId: "yourcompany" })
+    Addon-->>BrandSite: Responds with signed prior exposure voucher (No browsing history, No PII)
+    BrandSite->>Gateway: POST /v1/evidence/attribute (Connects conversion to LinkedIn exposure)
+    Gateway-->>BrandSite: Verified Attribution Confirmed (100% mathematical origin certainty)
+```
+
+1. **Local Anonymous Proof Custody:** When the viewer engages on LinkedIn or YouTube, the VAP addon mints and stores a local, zero-PII attestation voucher in their browser storage (`urn:vap:proof:social:<platform>:<id>`).
+2. **First-Party Handshake on Conversion:** When the user lands on the brand's signup page, the first-party VAP SDK (`@verified-attention/sdk-browser`) performs a local `window.postMessage` handshake with the extension, querying: *"Does this browser hold any verified attention proofs for this brand within the last 30 days?"*
+3. **Zero-Knowledge Proof Disclosure:** The extension supplies a cryptographically signed voucher confirming: *"This viewer held 60s of verified attention on your LinkedIn post 72 hours ago."*
+4. **Complete Privacy:** No cross-site tracking cookies, no personal identity leak, and no drop-down surveys.
+
+---
+
+## Part 4: Case Study — Medium and the Readership Paywall Economy
+
+### How Medium Does It At The Moment
+
+Medium's Partner Program (MPP) represents the digital economy's most prominent attempt to monetize **attention over clicks**:
+- **Subscription Pool:** Readers pay Medium $5/month (or $50/year).
+- **Core Payout Metric:** Writers are paid based on **Member Reading Time** — the total active seconds paying members spend reading their stories.
+- **Engagement Multipliers:** Medium factors in claps (up to 50 per reader), text highlights, replies, new follower conversions, and a "Read Ratio" (readers who dwell $\ge 30$ seconds versus raw link clickers).
+- **Manual "Boost" Curation:** Because programmatic metrics are vulnerable to fraud, Medium relies on human editors to manually "Boost" high-quality stories with distribution multipliers.
+
+```
+Medium Member ($5/mo Pool) ──▶ Basic In-Browser Timer ──▶ Claps / Highlights ──▶ Monthly Writer Royalty
+```
+
+### The Critical Flaws in Medium's Current Model
+
+1. **Susceptible to Synthetic Bot Farms:** Medium measures reading time using basic browser JavaScript timers and scroll events. Bot farms easily defeat this: automated headless scripts navigate to stories, scroll at pseudo-random intervals, idle for 35 seconds to beat the read threshold, and script 50 claps.
+2. **Reciprocal Engagement Cartels:** Writers form organized rings where accounts automatically open tabs, leave comments like *"Great read!"*, and inflate each other's reading times.
+3. **Walled Garden Imprisonment:** A writer's verified readership is locked inside Medium. If a writer moves to Substack, Ghost, or seeks direct corporate sponsorship, they cannot cryptographically prove their historical read time to external partners.
+4. **Expensive Human Band-Aids:** Medium has to spend millions on manual human review and constantly suspend fraudulent author accounts because their underlying telemetry lacks cognitive verification.
+
+### How VAP Revolutionizes Readership Paywalls
+
+| Feature | Medium's Current MPP Model | Upgraded with VAP Standard |
+| :--- | :--- | :--- |
+| **Dwell Verification** | Basic JavaScript timer (trivially spoofed by bots) | **Cognitive Micro-Entropy:** Validates pointer jitter, saccades, and scroll dynamics |
+| **Reading Velocity** | Simple $\ge 30\text{s}$ binary threshold | **Bot-Proof Velocity Enforcement:** Enforces human reading speed ($\le 900\text{ WPM}$). Unnatural speeds yield zero confidence |
+| **Focus Verification** | Tab can be hidden or running in background | **Strict Visibility & Focus:** Dwell only accrues when `document.visibilityState === 'visible'` and window has active focus |
+| **Proof Portability** | Trapped inside Medium's centralized database | **Portable PoA Tokens:** Writer owns signed Ed25519 proofs (`urn:vap:proof:...`) usable across any sponsor, platform, or audit |
+| **Monetization Flexibility** | Walled garden subscription split only | **Multi-Model:** Direct sponsor payouts, micropayments, attention-metered paywalls, and cross-platform royalties |
+
+---
+
+## Part 5: Commercialization — How the Protocol Sustains Itself
+
+Per [docs/MONETIZATION.md](file:///Users/nickrotich/Desktop/portfolio/projects/python/verified-attention/docs/MONETIZATION.md), while the core VAP protocol specification is open (CC0) and the reference engine is open-source (Apache 2.0), commercial infrastructure and trust services generate revenue across four distinct vectors:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ 1. Verified Dark Social Attribution Match Fee                          │
+│    • $0.25 – $1.00 per verified conversion handshake                   │
+│    • Replaces $50+ wasted CAC on blind retargeting & attribution SaaS │
+├────────────────────────────────────────────────────────────────────────┤
+│ 2. Managed Clearing & Verification API (Usage-Based)                   │
+│    • $0.50 – $2.00 per 1,000 verified attention proofs                 │
+│    • Ingests, validates, and mints HSM-backed cryptographic proofs     │
+├────────────────────────────────────────────────────────────────────────┤
+│ 3. Enterprise Console & Policy Studio Tier                             │
+│    • $499 – $2,499 / month                                             │
+│    • Custom domain rules, compliance audit exports, CRM integrations   │
+├────────────────────────────────────────────────────────────────────────┤
+│ 4. Attention Clearing Take-Rate (Creator & Publisher Ecosystems)       │
+│    • 1.5% – 3% clearing fee on creator payout distributions           │
+│    • Automated clearinghouse for attention-based royalty pools         │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **The Attribution Alternative:** Attribution software providers (e.g., Northbeam, Triple Whale, Rockerbox) charge merchants **$1,500 – $5,000/month** for probabilistic guesswork based on failing cookies. VAP provides **100% mathematical certainty** on dark social exposure at a fraction of the cost per verified conversion.
+2. **Managed Cloud Infrastructure:** Operating production-scale VAP clusters requires high-throughput streaming (Kafka/Redis), GPU inference for attention heatmaps, and Hardware Security Modules (HSMs) for cryptographic signing. Enterprise publishers and brands license managed cloud instances rather than self-hosting.
+3. **Audit Certificates:** Sponsors and corporate advertisers pay for verified compliance reports certifying that campaigns met contractual viewability and human attention standards, backed by tamper-evident cryptographic chains.
+

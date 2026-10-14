@@ -1,7 +1,10 @@
 /**
- * HSM interface stub — hardware security module abstraction.
- * This is a placeholder. Real HSM integration deferred to production hardening.
+ * HSM interface — software-backed implementation (node:crypto ECDSA P-256).
+ * Keys are generated per keyId and held in process memory. Cloud KMS / PKCS#11
+ * adapters can implement the same HSMInterface for production deployments.
  */
+
+import { generateKeyPairSync, createSign, createVerify, type KeyObject } from 'node:crypto';
 
 export interface HSMInterface {
   sign(data: Buffer, keyId: string): Promise<string>;
@@ -10,24 +13,50 @@ export interface HSMInterface {
 }
 
 /**
- * Stub HSM that throws NOT_IMPLEMENTED for all operations.
- * Replace with real HSM adapter (PKCS#11, AWS KMS, etc.) in production.
+ * Real software HSM: per-keyId lazily generated ECDSA P-256 keypairs.
+ * Keys never leave the instance (public key exported as PEM for verification).
  */
-export class StubHSM implements HSMInterface {
-  async sign(_data: Buffer, _keyId: string): Promise<string> {
-    throw new Error('NOT_IMPLEMENTED: HSM signing not available in stub mode');
+export class SoftwareHSM implements HSMInterface {
+  private readonly keys = new Map<string, { privateKey: KeyObject; publicKeyPem: string }>();
+
+  private getKey(keyId: string): { privateKey: KeyObject; publicKeyPem: string } {
+    let entry = this.keys.get(keyId);
+    if (!entry) {
+      const { privateKey, publicKey } = generateKeyPairSync('ec', { namedCurve: 'P-256' });
+      entry = { privateKey, publicKeyPem: publicKey.export({ type: 'spki', format: 'pem' }) as string };
+      this.keys.set(keyId, entry);
+    }
+    return entry;
+
   }
 
-  async verify(_data: Buffer, _signature: string, _keyId: string): Promise<boolean> {
-    throw new Error('NOT_IMPLEMENTED: HSM verification not available in stub mode');
+  async sign(data: Buffer, keyId: string): Promise<string> {
+    const signer = createSign('sha256');
+    signer.update(data);
+    signer.end();
+    return signer.sign(this.getKey(keyId).privateKey).toString('hex');
   }
 
-  async getPublicKey(_keyId: string): Promise<string> {
-    throw new Error('NOT_IMPLEMENTED: HSM public key export not available in stub mode');
+  async verify(data: Buffer, signature: string, keyId: string): Promise<boolean> {
+    const verifier = createVerify('sha256');
+    verifier.update(data);
+    verifier.end();
+    try {
+      return verifier.verify(this.getKey(keyId).publicKeyPem, Buffer.from(signature, 'hex'));
+    } catch {
+      return false;
+    }
+  }
+
+  async getPublicKey(keyId: string): Promise<string> {
+    return this.getKey(keyId).publicKeyPem;
   }
 }
 
+/** @deprecated Use SoftwareHSM. Kept for backwards compatibility. */
+export const StubHSM = SoftwareHSM;
+
 /**
- * Singleton HSM instance (stub by default).
+ * Singleton HSM instance (software-backed by default).
  */
-export const hsm: HSMInterface = new StubHSM();
+export const hsm: HSMInterface = new SoftwareHSM();
