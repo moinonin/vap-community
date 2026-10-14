@@ -36,6 +36,7 @@ This repository follows a strict document hierarchy (per [AI_AUTHORING_GUIDE.md]
 
 | Document                                                                            | Purpose                                                                               | Status     |
 | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ---------- |
+| [Venture Thesis](docs/VENTURE_THESIS.md)                                          | Why Verified Attention should exist — economic, philosophical, societal justification | ✅ Complete |
 | [Project Charter](docs/specs/0000-project-charter.md)                               | What VAE intends to build — scope, phases, governance, roadmap                        | ✅ Complete |
 | [Verified Attention Protocol (VAP)](docs/specs/0001-verified-attention-protocol.md) | Normative protocol specification — evidence, claims, confidence, proofs, conformance  | ✅ Complete |
 | [Verified Attention Engine (VAE)](docs/specs/0010-verified-attention-engine.md)     | Reference implementation architecture — pipelines, ML, APIs, security, deployment     | ✅ Complete |
@@ -133,7 +134,7 @@ This monorepo contains services, applications, and client SDKs. Here is how to r
 
 ```bash
 # Clone repository and install dependencies
-git clone https://github.com/moinonin/vap-community.git
+git clone https://github.com/moinonin/verified-attention.git
 cd verified-attention
 pnpm install
 
@@ -211,36 +212,77 @@ make stop-cluster
 
 ---
 
-### Building the 6 Community Service Containers
+### Building & Pushing the 6 Service Container Images
 
-The community repository provides source build contexts for 6 services and background workers:
+The codebase builds 6 dedicated container images covering all application services, background workers, and web interfaces:
 
-| Service / Container | Context & Dockerfile | Base Image | Role / Entrypoint |
+| Container / Service | Context & Dockerfile | Base Image | Role / Entrypoint |
 | :--- | :--- | :--- | :--- |
-| **`portal`** | `apps/portal/Dockerfile` | `node:22-alpine` | Web landing, live explorer & community console (port `4000`) |
+| **`portal`** | `apps/portal/Dockerfile` | `node:22-alpine` | Protocol portal, interactive explorer & console (port `4000`) |
 | **`api`** | `apps/api/Dockerfile` | `node:22-alpine` | REST API, session ingestion, policies, proofs (port `3000`) |
-| **`ml-serving`** | `apps/ml-serving/Dockerfile` | `node:22-slim` | Baseline TFJS attention calibration & drift monitoring (port `8085`) |
-| **`python-backend`** | `scripts/Dockerfile` | `python:3.11-slim` | High-throughput observation ingestion server (port `8002`) |
+| **`ml-serving`** | `apps/ml-serving/Dockerfile` | `node:22-slim` | Attention scoring, TFJS inference & drift monitoring (port `8085`) |
+| **`python-backend`** | `scripts/Dockerfile` | `python:3.11-slim` | High-throughput ingestion & analytics server (port `8002`) |
 | **`verifier`** | `apps/verifier/Dockerfile` | `node:22-alpine` | Verification engine daemon, proof generation & review worker |
 | **`settlement-worker`** | `packages/reward/settlement/Dockerfile` | `node:22-alpine` | Settlement queue daemon & reward reconciliation worker |
 
-#### Step-by-Step Local Build
+#### Step-by-Step Build Instructions
 
-1. **Install Dependencies & Prime Monorepo Cache**
+1. **Prerequisite: Local Monorepo Build Cache**
+   Because TypeScript/pnpm workspace dependencies cross-reference packages across the monorepo, build workspace packages locally first:
    ```bash
-   pnpm install
    pnpm build
    ```
 
-2. **Build and Run All Services via Docker Compose**
-   ```bash
-   docker compose up -d --build
-   ```
-
-   *Or build any individual service container directly:*
+2. **Build All 6 Images via Docker Compose**
    ```bash
    docker compose build portal api ml-serving python-backend verifier settlement-worker
    ```
+   *Or build any individual service container manually:*
+   ```bash
+   # Portal
+   docker build -t verified-attention-portal -f apps/portal/Dockerfile .
+
+   # REST API
+   docker build -t verified-attention-api -f apps/api/Dockerfile .
+
+   # ML Serving
+   docker build -t verified-attention-ml-serving -f apps/ml-serving/Dockerfile .
+
+   # Python Backend
+   docker build -t verified-attention-python-backend -f scripts/Dockerfile .
+
+   # Verifier Worker
+   docker build -t verified-attention-verifier -f apps/verifier/Dockerfile .
+
+   # Settlement Worker
+   docker build -t verified-attention-settlement-worker -f packages/reward/settlement/Dockerfile .
+   ```
+
+3. **Tag for Target Container Registry (e.g., Docker Hub)**
+   ```bash
+   REGISTRY="moinonin"
+
+   docker tag verified-attention-portal:latest ${REGISTRY}/verified-attention-portal:latest
+   docker tag verified-attention-api:latest ${REGISTRY}/verified-attention-api:latest
+   docker tag verified-attention-ml-serving:latest ${REGISTRY}/verified-attention-ml-serving:latest
+   docker tag verified-attention-python-backend:latest ${REGISTRY}/verified-attention-python-backend:latest
+   docker tag verified-attention-verifier:latest ${REGISTRY}/verified-attention-verifier:latest
+   docker tag verified-attention-settlement-worker:latest ${REGISTRY}/verified-attention-settlement-worker:latest
+   ```
+
+4. **Authenticate and Push Images**
+   ```bash
+   docker login
+
+   docker push ${REGISTRY}/verified-attention-portal:latest
+   docker push ${REGISTRY}/verified-attention-api:latest
+   docker push ${REGISTRY}/verified-attention-ml-serving:latest
+   docker push ${REGISTRY}/verified-attention-python-backend:latest
+   docker push ${REGISTRY}/verified-attention-verifier:latest
+   docker push ${REGISTRY}/verified-attention-settlement-worker:latest
+   ```
+
+---
 
 #### 4. Attention ML Serving (`apps/ml-serving`)
 Serves attention scoring and drift detection over HTTP:
@@ -276,6 +318,27 @@ node packages/cli/dist/index.js evidence ingest sample_evidence.json
 node packages/cli/dist/index.js verify sample_proof.json
 ```
 
+#### 7. Browser Extension Addon (`packages/sdk/extension`)
+For third-party spaces (LinkedIn, YouTube, X, TikTok, Substack, Medium), the MV3 Extension passively tracks viewport dwell and engagement using Universal Archetype profiles:
+```bash
+# Build the self-contained unpacked Chrome MV3 extension
+pnpm --filter @verified-attention/extension-sdk run build:extension
+```
+* **Install in Chrome / Brave / Edge**:
+  1. Navigate to `chrome://extensions`.
+  2. Toggle **Developer mode** (top-right).
+  3. Click **Load unpacked** and select `packages/sdk/extension/dist/unpacked`.
+  4. Pin the extension and verify consent gating in the popup UI.
+
+#### 8. Omni-Channel & Dark Social Attention
+* **Universal Archetype Engine**: Normalizes un-instrumented platforms into 3 core archetypes:
+  - `feed_card`: Infinite scroll feeds (LinkedIn, X, TikTok, Facebook).
+  - `video_player`: HTML5 video players (YouTube, Vimeo, Twitch).
+  - `longform_article`: Metered and open editorial content (Medium, Substack, dev.to).
+* **External Evidence Ingestion**: `POST /v1/evidence/external` receives client-attested external observations and signs Proofs of Attention via the `social_engagement_v1` policy.
+* **Dark Social Attribution Handshake**: Solves *"Where did you hear about us?"* without tracking cookies. When a user lands on a brand's first-party website, the Browser SDK queries local `urn:vap:prior-attentions` to match prior social exposures against active campaigns.
+* **Customer Console Omni-Channel View**: Open `http://localhost:4000`, click **Customer Console**, and switch to **Omni-Channel & Social** to filter proofs by platform and download the cryptographic audit log (`vap_omnichannel_social_proofs.csv`).
+
 ---
 
 ### Running Tests & Verification
@@ -302,6 +365,7 @@ pnpm lint
 verified-attention/
 ├── docs/
 │   ├── AI_AUTHORING_GUIDE.md           # Writing standards for all documents
+│   ├── VENTURE_THESIS.md               # Why Verified Attention exists
 │   ├── quickstart.md                   # 5-minute local walkthrough
 │   ├── developer-portal/               # Developer portal & API reference mapping
 │   ├── whitepaper/                     # Protocol whitepaper (LaTeX + rendered PDF)

@@ -12,6 +12,7 @@
   },
   "scripts": {
     "build": "tsdown src/index.ts",
+    "build:extension": "esbuild src/background.ts src/content.ts src/popup.ts --bundle --outdir=dist/unpacked --format=esm && cp manifest.json popup.html dist/unpacked/",
     "dev": "tsdown src/index.ts --watch",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
