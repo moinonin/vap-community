@@ -650,20 +650,19 @@ nav a:hover {
 }
 
 .gate-card-overlay {
-  background: rgba(17, 24, 39, 0.98);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(17, 24, 39, 0.95);
   border: 1px solid var(--accent);
-  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
   border-radius: 12px;
-  padding: 2.5rem 2rem;
+  padding: 2.5rem;
   text-align: center;
-  max-width: 440px;
-  width: min(90%, 440px);
-  margin: 0 auto;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  max-width: 480px;
+  width: 90%;
+  z-index: 50;
 }
 
 /* Full Console Workspace Layout (Sidebar Mode) */

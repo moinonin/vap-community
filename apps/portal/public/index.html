@@ -311,13 +311,15 @@
 
   <!-- Commercial Customer Console & Business Management Layer -->
   <section class="section" id="console-section" style="border-top: 1px solid var(--border); padding-top: 4rem;">
-    <div style="text-align: center; max-width: 860px; margin: 0 auto 3rem;">
-      <h2 class="section-title">Customer Console &amp; Developer Hub</h2>
-      <div style="margin: 0.5rem 0 0.85rem; display: flex; justify-content: center; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
-        <span class="logo-badge" style="background:rgba(16,185,129,0.15); color:var(--success); border-color:var(--success);">Karakana VaaS Enterprise</span>
-        <span class="status-tag active" style="font-size:0.75rem;">Organization: Karakana Global</span>
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 2rem;">
+      <div>
+        <span class="logo-badge" style="background:rgba(16,185,129,0.15); color:var(--success); border-color:var(--success); margin-bottom:0.5rem; display:inline-block;">Karakana VaaS Enterprise</span>
+        <h2 style="font-size: 2.2rem; font-weight: 800; color: #fff;">Customer Console &amp; Developer Hub</h2>
+        <p style="color:var(--text-muted); font-size:1rem; margin-top:0.25rem;">Manage API keys, configure custom verification policies, audit signed proofs, and monitor settlement clearing.</p>
       </div>
-      <p class="section-desc" style="margin-bottom: 0;">Manage API keys, configure custom verification policies, audit signed proofs, and monitor settlement clearing.</p>
+      <div>
+        <span class="status-tag active">Organization: Karakana Global</span>
+      </div>
     </div>
 
     <!-- Gated Container Wrapper -->
@@ -325,23 +327,23 @@
       
       <!-- Overlay Gate (Visible when not authenticated) -->
       <div id="console-gate-overlay" class="gate-card-overlay">
-        <div style="font-size:2.2rem; margin-bottom:0.5rem;">🔒</div>
-        <h3 style="color:#fff; font-size:1.25rem; margin-bottom:0.4rem;">Enterprise Console Gated</h3>
-        <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1.25rem; line-height:1.5; max-width:320px; margin-left:auto; margin-right:auto;">
+        <div style="font-size:2.5rem; margin-bottom:0.75rem;">🔒</div>
+        <h3 style="color:#fff; font-size:1.4rem; margin-bottom:0.5rem;">Enterprise Console Gated</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
           Access to production API keys, policy deployment, and billing ledgers requires enterprise organization credentials or developer sandbox access.
         </p>
-        <div style="display:flex; flex-direction:column; gap:0.6rem; max-width:280px; width:100%; margin:0 auto;">
-          <button class="btn btn-primary" onclick="openAuthModal('signup')" style="width:100%; justify-content:center; padding:0.55rem 1rem; font-size:0.85rem;">
+        <div style="display:flex; flex-direction:column; gap:0.75rem;">
+          <button class="btn btn-primary" onclick="openAuthModal('signup')" style="justify-content:center;">
             ⚡ Create Free Sandbox Account
           </button>
-          <button class="btn btn-outline" onclick="openAuthModal('login')" style="width:100%; justify-content:center; padding:0.55rem 1rem; font-size:0.85rem;">
+          <button class="btn btn-outline" onclick="openAuthModal('login')" style="justify-content:center;">
             Sign In with Existing Account
           </button>
         </div>
       </div>
 
       <!-- Main Gated Inner Body (blurred until unlocked) -->
-      <div id="console-inner-body" class="gate-blur" style="display:none;">
+      <div id="console-inner-body" class="gate-blur">
         <div class="console-app-container">
           <!-- Workspace Sidebar -->
           <aside class="console-sidebar">

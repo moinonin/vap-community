@@ -221,14 +221,11 @@ function applyAuthenticatedState(user) {
   if (sidebarEmail && user.email) sidebarEmail.textContent = user.email;
   if (sidebarFooter) sidebarFooter.style.display = 'block';
 
-  // 3. Unlock console overlay & reveal console body
+  // 3. Unlock console overlay & unblur
   const overlay = document.getElementById('console-gate-overlay');
   const inner = document.getElementById('console-inner-body');
   if (overlay) overlay.style.display = 'none';
-  if (inner) {
-    inner.style.display = 'block';
-    inner.classList.remove('gate-blur');
-  }
+  if (inner) inner.classList.remove('gate-blur');
 }
 
 function applyLoggedOutState() {
@@ -242,11 +239,11 @@ function applyLoggedOutState() {
   const sidebarFooter = document.getElementById('sidebar-footer-container');
   if (sidebarFooter) sidebarFooter.style.display = 'none';
 
-  // 3. Show gating overlay card only, completely hiding inner workspace
+  // 3. Restore gating overlay & blur
   const overlay = document.getElementById('console-gate-overlay');
   const inner = document.getElementById('console-inner-body');
-  if (overlay) overlay.style.display = 'flex';
-  if (inner) inner.style.display = 'none';
+  if (overlay) overlay.style.display = 'block';
+  if (inner) inner.classList.add('gate-blur');
 }
 
 function openAuthModal(mode = 'login') {
