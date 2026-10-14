@@ -46,12 +46,12 @@ header {
 }
 
 .nav-container {
-  max-width: 1200px;
+  max-width: 1480px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
+  padding: 1rem clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .logo-group {
@@ -157,16 +157,16 @@ nav a:hover {
 
 /* Hero Section */
 .hero {
-  max-width: 1100px;
-  margin: 4rem auto 2rem;
-  padding: 0 1.5rem;
+  max-width: 1250px;
+  margin: 4.5rem auto 2.5rem;
+  padding: 0 clamp(1.5rem, 3vw, 2.5rem);
   text-align: center;
 }
 
 .hero h1 {
-  font-size: clamp(2.1rem, 5.5vw, 3.2rem);
+  font-size: clamp(2.1rem, 5vw, 3.6rem);
   line-height: 1.15;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.35rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   background: linear-gradient(135deg, #ffffff 40%, #93c5fd 100%);
@@ -175,9 +175,9 @@ nav a:hover {
 }
 
 .hero p {
-  font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
   color: var(--text-muted);
-  max-width: 780px;
+  max-width: 860px;
   margin: 0 auto 2.5rem;
 }
 
@@ -190,9 +190,9 @@ nav a:hover {
 
 /* Grid & Cards */
 .section {
-  max-width: 1200px;
+  max-width: 1480px;
   margin: 5rem auto;
-  padding: 0 1.5rem;
+  padding: 0 clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .section-title {
@@ -733,8 +733,8 @@ nav a:hover {
 
 .console-main-content {
   flex: 1;
-  padding: 2.5rem 3rem;
-  max-width: 1300px;
+  padding: clamp(1.75rem, 3vw, 3rem) clamp(2rem, 4vw, 3.5rem);
+  max-width: 100%;
   overflow-y: auto;
 }
 
@@ -902,6 +902,72 @@ nav a:hover {
   .gate-card-overlay {
     padding: 1.25rem 1rem;
     width: 96%;
+  }
+}
+
+/* Wide Display & High-Resolution Display Optimizations (macOS Retina, 2K/4K Displays) */
+@media (min-width: 1536px) {
+  .nav-container,
+  .section {
+    max-width: 1600px;
+  }
+
+  .hero {
+    max-width: 1350px;
+    margin: 5.5rem auto 3rem;
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 2rem;
+  }
+
+  .explorer-box {
+    min-height: 580px;
+  }
+
+  .terminal-logs {
+    max-height: 520px;
+  }
+
+  .console-app-container {
+    min-height: 720px;
+  }
+
+  .console-sidebar {
+    width: 280px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .nav-container,
+  .section {
+    max-width: 1760px;
+  }
+
+  .hero {
+    max-width: 1500px;
+  }
+
+  .hero h1 {
+    font-size: 3.8rem;
+  }
+
+  .hero p {
+    font-size: 1.35rem;
+    max-width: 960px;
+  }
+
+  .card {
+    padding: 2.25rem;
+  }
+
+  .card h3 {
+    font-size: 1.35rem;
+  }
+
+  .card p {
+    font-size: 1.05rem;
   }
 }
 
