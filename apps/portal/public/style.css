@@ -650,19 +650,15 @@ nav a:hover {
 }
 
 .gate-card-overlay {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(17, 24, 39, 0.96);
+  background: rgba(17, 24, 39, 0.98);
   border: 1px solid var(--accent);
   box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
   border-radius: 12px;
-  padding: 2.25rem 2rem;
+  padding: 2.5rem 2rem;
   text-align: center;
   max-width: 440px;
   width: min(90%, 440px);
-  z-index: 50;
+  margin: 0 auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
